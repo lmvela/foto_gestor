@@ -3,7 +3,8 @@
 import ssl
 from pymongo import MongoClient
 
-client = MongoClient(port=27017)
+#client = MongoClient(port=27017)
+client=MongoClient("mongodb://mongodb:mongodb@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 db=client.clasificador_foto
 
 def get_all_count_db():

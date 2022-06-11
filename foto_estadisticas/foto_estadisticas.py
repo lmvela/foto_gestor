@@ -1,15 +1,17 @@
 import os
 import sys
 
-sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+#sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
 
 def main():
-    # Enseña extensiones en el directorio
     print(" Estadisticas DIRECTORIO")
     print("-------------------------")
-    exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(ROOT_DIR) for f in files if '.' in f) 
+    print("Dir: " + ROOT_DIR)
+    #exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(ROOT_DIR) for f in files if '.' in f) 
+    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(ROOT_DIR) for f in files if '.' in f) 
     print (str(exts))
     for ext in exts:
         num, tamaño = proc_list_ficheros(get_file_list(ROOT_DIR, [ext]))
@@ -32,35 +34,25 @@ def main():
     print(" Estadisticas BASE-DATOS")
     print("-------------------------")
 
-    # Numero / tamaño de ficheros / fotos / videos / audios por usuario
     print("Numero total de documentos: " + str(get_all_count_db()))
-    for user in USER_LIST:
-        for _, tipo in LISTA_TIPOS:
-            print(" {0}: Numero de {1}: {2}".format(user, tipo, get_typeuser_count_db(user, tipo)))
-
-    # Numero / tamaño de ficheros en CATALOGO
     print("Numero total de documentos a CATALOGO: " + str(get_media_count_db()))
-    for user in USER_LIST:
-        for _, tipo in LISTA_TIPOS:
-            print(" {0}: CATALOGO {1}: {2}".format(user, tipo, get_typeuser_media_count_db(user, tipo)))
-
-    # Numero / tamaño de ficheros a revisar
     print("Numero total de documentos a REVISAR: " + str(get_revisar_count_db()))
-    for user in USER_LIST:
-        for _, tipo in LISTA_TIPOS:
-            print(" {0}: REVISAR {1}: {2}".format(user, tipo, get_typeuser_revisar_count_db(user, tipo)))
-
-    # Numero / tamaño de ficheros a borrar
     print("Numero total de documentos a BORRAR: " + str(get_borrar_count_db()))
-    for user in USER_LIST:
-        for _, tipo in LISTA_TIPOS:
-            print(" {0}: BORRAR {1}: {2}".format(user, tipo, get_typeuser_borrar_count_db(user, tipo)))
-
-    # Numero / tamaño de ficheros duplicados dentro usuario
     print("Numero total de documentos DUPLICADOS: " + str(get_duplicados_count_db()))
     for user in USER_LIST:
-        for _, tipo in LISTA_TIPOS:
-            print(" {0}: DUPLICADOS {1}: {2}".format(user, tipo, get_typeuser_duplicados_count_db(user, tipo)))
+        print("Usuario:\t" + user)
+        for _, tipo in LISTA_TIPOS_CATALOGO:
+            print("Tipo:\t\t" + tipo)
+            # Numero / tamaño de ficheros / fotos / videos / audios por usuario
+            print(" TOTAL:\t\t{0}".format(get_typeuser_count_db(user, tipo)))
+            # Numero / tamaño de ficheros en CATALOGO
+            print(" CATALOGO:\t{0}".format(get_typeuser_media_count_db(user, tipo)))
+            # Numero / tamaño de ficheros a revisar
+            print(" REVISAR:\t{0}".format(get_typeuser_revisar_count_db(user, tipo)))
+            # Numero / tamaño de ficheros a borrar
+            print(" BORRAR:\t{0}".format(get_typeuser_borrar_count_db(user, tipo)))
+            # Numero / tamaño de ficheros duplicados dentro usuario
+            print(" DUPLICADOS:\t{0}".format(get_typeuser_duplicados_count_db(user, tipo)))
 
     # Numero / tamaño de ficheros duplicados entre usuarios
 

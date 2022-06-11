@@ -1,7 +1,8 @@
 import os
 import sys
 
-sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+#sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
 
@@ -11,7 +12,7 @@ def get_list_image_hash(root_dir, lista_tipos):
     for filename in file_list:
         hash = calculate_hash(filename)
         size = os.path.getsize(filename)
-        ret_list.append((filename, hash, size, type))
+        ret_list.append((filename, hash, size))
     return ret_list
 
 def proc_duplicado(nuevo_filename, existing_img, user, tipo):
@@ -39,7 +40,7 @@ def main():
     # Primero analizamos imagenes para cada usuario por separado
     for user in USER_LIST:
         # Analyzamos ficheros por tipo
-        for lista_tipos, tag_tipo in LISTA_TIPOS:
+        for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
             # Get list {file, hash}
             img_hash_list = get_list_image_hash(ROOT_DIR + '/' + user + '/', lista_tipos)
 

@@ -3,17 +3,49 @@ import glob
 import os
 import hashlib
 
-ROOT_DIR = './foto_root'
-USER_LIST = ['evd', 'lvg']
+##
+#   CFG Directorios raiz
+##
+ROOT_DIR = '/media/cavehost_hdd/00_fotos/catalogo'
+DESCARTAR_ROOT_DIR = '/media/cavehost_hdd/00_fotos/descartar'
+USER_LIST = ['evd', 'fvd', 'fvg', 'lvg']
 
-TIPOS_IMAGEN    = ['jpg', 'png']
-TIPOS_VIDEO     = ['mpg']
-TIPOS_AUDIO     = ['mp3']
-LISTA_TIPOS     = [
+##
+#   Tipos de medios aceptados en el catalogo
+##
+TIPOS_IMAGEN = ['bmp', 'jpg', 'png', 'MOV', 'JPG', 'gif', 'tif', 'enc', 'mpo', 'NEF', 'cr2', 'CR2', 'ARW', 'webp', 'xcf']
+TIPOS_VIDEO = ['MP4', 'mov', 'AVI', 'MPG', '3gp', 'wmv', 'm4v', 'mp4', 'mpg', 'avi']
+TIPOS_AUDIO = ['gp3', 'mp3', 'wav', 'm4a', '3ga']
+TIPOS_MINIATURAS = ['THM'] 
+
+LISTA_TIPOS_CATALOGO = [
     (TIPOS_IMAGEN, 'IMG'), 
     (TIPOS_VIDEO, 'VID'),
-    (TIPOS_AUDIO, 'AUD')
+    (TIPOS_AUDIO, 'AUD'),
+    (TIPOS_MINIATURAS, 'MIN')
 ]
+
+##
+#   Tipos de ficheros a descartar
+##
+TIPOS_PRESENTACIONES = ['psh', 'pxc', 'ppt', 'pps'] 
+TIPOS_BACKUP_DATOS = ['enml', 'pub', 'txt']
+TIPOS_BACKUP_MEDIA = ['jpg_old', 'JPG_old', 'mp4_old', 'zip', 'jpeg_old']
+TIPOS_LIMPIAR = ['html', 'ini', 'lnk']
+
+LISTA_TIPOS_DESCARTAR = [
+    (TIPOS_PRESENTACIONES, 'PRS', 'presentaciones'),
+    (TIPOS_BACKUP_DATOS, 'DAT', 'backup_datos'),
+    (TIPOS_BACKUP_MEDIA, 'BMD', 'backup_media'),
+    (TIPOS_LIMPIAR, 'LIM', 'papelera'),
+]
+
+##
+#   Funciones communes
+##
+def crea_carpeta(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 def nombre_fichero(path):
     head, tail = ntpath.split(path)
