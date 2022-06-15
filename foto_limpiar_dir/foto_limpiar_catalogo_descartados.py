@@ -8,6 +8,9 @@ else:
     sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 
+##
+#
+##
 def get_list_image_hash(root_dir, lista_tipos):
     ret_list = []
     file_list = get_file_list(root_dir, lista_tipos)
@@ -17,7 +20,9 @@ def get_list_image_hash(root_dir, lista_tipos):
         ret_list.append((filename, hash, size, type))
     return ret_list
 
-
+##
+#
+##
 def main():
 
     # Analizamos imagenes para cada usuario por separado
