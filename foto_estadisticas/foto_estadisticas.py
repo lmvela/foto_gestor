@@ -1,32 +1,37 @@
 import os
 import sys
 
-#sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
-sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
+if sys.platform.startswith('win'):
+    sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+else:
+    sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
 
+##
+#
+##
 def main():
     print(" Estadisticas DIRECTORIO")
     print("-------------------------")
-    print("Dir: " + ROOT_DIR)
-    #exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(ROOT_DIR) for f in files if '.' in f) 
-    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(ROOT_DIR) for f in files if '.' in f) 
+    print("Dir: " + CATALOGO_ROOT_DIR)
+    #exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
+    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
     print (str(exts))
     for ext in exts:
-        num, tamaño = proc_list_ficheros(get_file_list(ROOT_DIR, [ext]))
+        num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, [ext]))
         print("Extension {0}:\t{1}\t{2}".format(ext, num, tamaño))
 
     # Lista estadisticas sobre Directorio
-    tamaño_dir = get_directory_size(ROOT_DIR)
-    num_ficheros = get_total_file_list(ROOT_DIR)
+    tamaño_dir = get_directory_size(CATALOGO_ROOT_DIR)
+    num_ficheros = get_total_file_list(CATALOGO_ROOT_DIR)
     print("Totales:\t{0}\t{1}".format(num_ficheros, tamaño_dir))
 
-    num, tamaño = proc_list_ficheros(get_file_list(ROOT_DIR, TIPOS_IMAGEN))
+    num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, TIPOS_IMAGEN))
     print(" Imagenes:\t{0}\t{1}".format(num, tamaño))
-    num, tamaño = proc_list_ficheros(get_file_list(ROOT_DIR, TIPOS_VIDEO))
+    num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, TIPOS_VIDEO))
     print(" Videos:\t{0}\t{1}".format(num, tamaño))
-    num, tamaño = proc_list_ficheros(get_file_list(ROOT_DIR, TIPOS_AUDIO))
+    num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, TIPOS_AUDIO))
     print(" Audios:\t{0}\t{1}".format(num, tamaño))
 
     # Estadisticas sobre la base de datos

@@ -1,3 +1,5 @@
+# For files in Catalogue
+
 # Delete hidden files (starting with .)
 echo Moviendo ficheros ocultos a la papelera
 find /media/cavehost_hdd/00_fotos/catalogo -type f -iname '.*' -exec mv -f {} /media/cavehost_hdd/00_fotos/descartar/papelera/ \;

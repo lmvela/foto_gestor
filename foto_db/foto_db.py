@@ -1,12 +1,45 @@
-
-
 import ssl
-from pymongo import MongoClient
+from pymongo import DeleteOne, MongoClient
+import sys
 
-#client = MongoClient(port=27017)
-client=MongoClient("mongodb://mongodb:mongodb@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+##
+# Conecta a DB y devuelve la coleccion
+##
+# En sistema windows conectar a DB de test (local)
+if sys.platform.startswith('win'):
+    client = MongoClient(port=27017)
+# En sistema Linux conectar a la DB NAS
+else:
+    client=MongoClient("mongodb://mongodb:mongodb@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 db=client.clasificador_foto
 
+##
+# Devuelva la lista de duplicados en el catalogo
+##
+def get_all_duplicados_db():
+    return db.lista_duplicados.find();
+
+##
+#   Borrar un documento de la lista de duplicados
+##
+def del_dup_db(dup):
+    return db.lista_duplicados.delete_one(dup)
+
+##
+#   Borrar un documento de la lista de revision
+##
+def del_revisar_db(dup):
+    return db.lista_revision.delete_one(dup)
+
+##
+# Devuelva la lista de duplicados en el catalogo
+##
+def get_all_revision_db():
+    return db.lista_revision.find();
+
+##
+#
+##
 def get_all_count_db():
     ctr =db.lista_media.count_documents({})
     ctr+=db.lista_borrar.count_documents({})

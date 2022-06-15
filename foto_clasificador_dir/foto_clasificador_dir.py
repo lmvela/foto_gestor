@@ -1,11 +1,16 @@
 import os
 import sys
 
-#sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
-sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
+if sys.platform.startswith('win'):
+    sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+else:
+    sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
 
+##
+#
+##
 def get_list_image_hash(root_dir, lista_tipos):
     ret_list = []
     file_list = get_file_list(root_dir, lista_tipos)
@@ -15,6 +20,9 @@ def get_list_image_hash(root_dir, lista_tipos):
         ret_list.append((filename, hash, size))
     return ret_list
 
+##
+#
+##
 def proc_duplicado(nuevo_filename, existing_img, user, tipo):
     if nombre_fichero(nuevo_filename) != nombre_fichero(existing_img['filename']):
         # ATENCION: Mismo hash pero distinto nombre: Hay que analizar manualmente
@@ -25,16 +33,22 @@ def proc_duplicado(nuevo_filename, existing_img, user, tipo):
     else:
         # se trata de un duplicado
         img_duplicado_db(nuevo_filename, existing_img, user, tipo)
-
+        
+##
+#
+##
 def es_img_mejor(nuevo_filename, viejo_filename):
     # Regla1: Conservar imagenes en el directorio Eventos
     if "Eventos" in nuevo_filename and "Eventos" not in viejo_filename:
         return True
     return False
 
+##
+#
+##
 def main():
     # Show all extensions in dirtree
-    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(ROOT_DIR) for f in files if '.' in f) 
+    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
     print (str(exts))
 
     # Primero analizamos imagenes para cada usuario por separado
@@ -42,7 +56,7 @@ def main():
         # Analyzamos ficheros por tipo
         for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
             # Get list {file, hash}
-            img_hash_list = get_list_image_hash(ROOT_DIR + '/' + user + '/', lista_tipos)
+            img_hash_list = get_list_image_hash(CATALOGO_ROOT_DIR + '/' + user + '/', lista_tipos)
 
             # Update info in DB
             for img in img_hash_list:

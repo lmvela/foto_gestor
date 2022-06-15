@@ -2,8 +2,10 @@ import os
 import sys
 import shutil
 
-#sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
-sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
+if sys.platform.startswith('win'):
+    sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+else:
+    sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 
 def get_list_image_hash(root_dir, lista_tipos):
@@ -18,14 +20,15 @@ def get_list_image_hash(root_dir, lista_tipos):
 
 def main():
 
-    # Primero analizamos imagenes para cada usuario por separado
+    # Analizamos imagenes para cada usuario por separado
     for user in USER_LIST:
-        # Analyzamos ficheros por tipo
+
+        # Analyzamos ficheros por tipo: Descartar ficheros que no son parte del catalogo de medios
         for lista_tipos, tag_tipo, carpeta_destino in LISTA_TIPOS_DESCARTAR:
             carpeta_destino_completa = DESCARTAR_ROOT_DIR + '/' + carpeta_destino 
             crea_carpeta(carpeta_destino_completa)
             # Get list {file, hash}
-            descartar_list = get_file_list(ROOT_DIR + '/' + user + '/', lista_tipos)
+            descartar_list = get_file_list(CATALOGO_ROOT_DIR + '/' + user + '/', lista_tipos)
             for fichero in descartar_list:
                 # move files 
                 destino = carpeta_destino_completa + '/' + user + "_" + nombre_fichero(fichero)
