@@ -38,6 +38,9 @@ def main():
     print("")
     print(" Estadisticas BASE-DATOS")
     print("-------------------------")
+    print("Lista users en catalogo: " + str(get_users_catalogo_db()))
+    print("Numero hash repetidos (cross-user): " + str(get_hash_repetidos_catalogo_db()))
+    print("Numero hash repetidos (por user):" + str(get_hash_repetidos_catalogo_por_user_db()))
 
     print("Numero total de documentos: " + str(get_all_count_db()))
     print("Numero total de documentos a CATALOGO: " + str(get_media_count_db()))

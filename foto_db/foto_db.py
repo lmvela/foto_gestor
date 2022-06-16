@@ -1,6 +1,7 @@
 import ssl
 from pymongo import DeleteOne, MongoClient
 import sys
+import pprint
 
 ##
 # Conecta a DB y devuelve la coleccion
@@ -12,6 +13,28 @@ if sys.platform.startswith('win'):
 else:
     client=MongoClient("mongodb://mongodb:mongodb@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 db=client.clasificador_foto
+
+##
+#
+##
+def get_hash_repetidos_catalogo_db():
+    pipeline = [
+        {"$group": { "_id": "$hash", "count": {"$sum": 1}}},
+        {"$match": { "count": {"$gt": 1}}}
+    ]
+    #pprint.pprint(list(db.lista_media.aggregate(pipeline)))
+    return len(list(db.lista_media.aggregate(pipeline)))
+
+def get_hash_repetidos_catalogo_por_user_db():
+    pipeline = [      
+        {"$group": { "_id": {"hash":"$hash", "user":"$user"}, "count": {"$sum": 1}}},
+        {"$match": { "count": {"$gt": 1}}}
+    ]
+    pprint.pprint(list(db.lista_media.aggregate(pipeline)))
+    return len(list(db.lista_media.aggregate(pipeline)))
+
+def get_users_catalogo_db():
+    return db.lista_media.distinct("user")
 
 ##
 # Devuelva la lista de duplicados en el catalogo
