@@ -15,13 +15,16 @@ from foto_db.foto_db import *
 #   CFG Directorios raiz
 ##
 if sys.platform.startswith('win'):
-    CATALOGO_ROOT_DIR = 'C:\\work\\02_Pers\\proyectos\\foto_gestor\\foto_root\\catalogo'
-    DESCARTAR_ROOT_DIR = 'C:\\work\\02_Pers\\proyectos\\foto_gestor\\foto_root\\descartar'
-    PAPELERA_DIR = 'C:\\work\\02_Pers\\proyectos\\foto_gestor\\foto_root\\descartar\\papelera'
+    ROOT_DIR = 'C:\\work\\02_Pers\\proyectos\\foto_gestor\\foto_root'
+    ROOT_DIR_DEMO = 'C:\\work\\02_Pers\\proyectos\\foto_gestor\\foto_root_demo'
 else:
-    CATALOGO_ROOT_DIR = '/media/cavehost_hdd/00_fotos/catalogo'
-    DESCARTAR_ROOT_DIR = '/media/cavehost_hdd/00_fotos/descartar'
-    PAPELERA_DIR = '/media/cavehost_hdd/00_fotos/descartar/papelera'
+    ROOT_DIR = '/media/cavehost_hdd/00_fotos'
+    ROOT_DIR_DEMO = '/media/cavehost_hdd/00_fotos'
+
+CATALOGO_ROOT_DIR = os.path.join(ROOT_DIR, 'catalogo')
+DESCARTAR_ROOT_DIR = os.path.join(ROOT_DIR, 'descartar')
+PAPELERA_DIR = os.path.join(ROOT_DIR, 'papelera')
+
 
 ##
 # Lista de Usuarios
@@ -77,6 +80,13 @@ BACKUP_FOLDER_TOKENS = ['backup', 'copy', 'copia']
 ##
 #
 ##
+def copia_file_crea_dirs(src_fpath, dest_fpath):
+    os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
+    shutil.copy(src_fpath, dest_fpath)
+
+##
+#
+##
 def crea_carpeta(path):
     if not os.path.exists(path):
         os.makedirs(path)
@@ -113,11 +123,13 @@ def get_total_file_list(root_dir):
 ##
 #
 ##
-def get_file_list(root_dir, lista_tipos):
+def get_file_list(root_dir, lista_tipos, max_len=-1):
     ret = []
     for tipo in lista_tipos:
         for filename in glob.iglob(root_dir + '/**/*.' + tipo, recursive=True):
             ret.append(os.path.normpath(filename))
+            if max_len>0 and len(ret)>max_len:
+                break
     return ret
 
 ##
