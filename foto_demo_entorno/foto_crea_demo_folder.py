@@ -18,31 +18,63 @@ def copy_file_crear_dir(src_fpath, dest_fpath):
 def main():
 
     # Create demo root directory
-    os.mkdir(ROOT_DIR_DEMO)
-
-    #
-
+    if not os.path.isdir(ROOT_DIR_DEMO):
+        os.mkdir(ROOT_DIR_DEMO)
+    img_user_demo_list = []
     # Primero analizamos imagenes para cada usuario por separado
     for user in USER_LIST:
+        img_demo_list = []
         # Analyzamos ficheros por tipo
         for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
             # Get list {file, hash}
-            img_hash_list = get_list_image_hash(CATALOGO_ROOT_DIR + '/' + user + '/', lista_tipos)
+            img_list = get_file_list(CATALOGO_ROOT_DIR + '/' + user + '/', lista_tipos, 1000)
+            img_demo_list.extend(img_list)
+        img_user_demo_list.append((user, img_demo_list))
 
-            # Update info in DB
-            for img in img_hash_list:
-                exists_img = img_new_db(img[1], user)
-                print('Existing img {0} is {1}'.format(img[0], str(exists_img)))
+    # Copiar todos los ficheros al directorio demo
+    for usr, list_el in img_user_demo_list:
+        for el in list_el:
+            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
+            copia_file_crea_dirs(el, f_tgt)
 
-                if exists_img is None:
-                    # Es un fichero nuevo que no existe en BD
-                    img_add_db(img, user, tag_tipo)
-                elif exists_img['filename'] == img[0]:
-                    # Es un fichero que ya esta en la BD
-                    img_existing_ok_db(exists_img)
-                else: 
-                    # Es un posible duplicado, procesalo          
-                    proc_duplicado(img[0], exists_img, user, tag_tipo)
+    # Use case: Create duplicate with same name. 
+    for usr, list_el in img_user_demo_list:
+        for el in list_el:
+            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
+            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_mismo_nombre")
+            copia_file_crea_dirs(el, f_tgt)
+
+    # Use case: Create duplicate with different name. 
+    for usr, list_el in img_user_demo_list:
+        for el in list_el:
+            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
+            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_diff_nombre")
+            copia_file_crea_dirs(el, f_tgt)
+            f_tgt_pre, f_tgt_ext = os.path.splitext(f_tgt)
+            os.rename(f_tgt, f_tgt_pre + "_new_name" + f_tgt_ext)
+
+    # Use case: Create duplicate with same name. In whatsapp folder. 
+    for usr, list_el in img_user_demo_list:
+        for el in list_el:
+            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
+            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_whatsapp")
+            copia_file_crea_dirs(el, f_tgt)            
+
+    # Use case: Create duplicate with same name. In Sent folder. 
+    for usr, list_el in img_user_demo_list:
+        for el in list_el:
+            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
+            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_whatsapp\\Sent")
+            copia_file_crea_dirs(el, f_tgt)            
+
+    # Use case: Create whatsapp like naming
+    for usr, list_el in img_user_demo_list:
+        for el in list_el:
+            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
+            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_diff_nombre")
+            copia_file_crea_dirs(el, f_tgt)
+            f_tgt_pre, f_tgt_ext = os.path.splitext(f_tgt)
+            os.rename(f_tgt, f_tgt_pre + "_new_name" + f_tgt_ext)            
 
 
 if __name__ == "__main__":

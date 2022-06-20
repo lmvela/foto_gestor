@@ -4,6 +4,7 @@ import os
 import hashlib
 import sys
 import shutil
+import re
 
 if sys.platform.startswith('win'):
     sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
@@ -76,6 +77,13 @@ BACKUP_FOLDER_TOKENS = ['backup', 'copy', 'copia']
 ##
 #   Funciones communes
 ##
+
+##
+#
+##
+def is_file_whatsapp(fname):
+    pattern = re.compile("(AUD|VID|IMG)-[0-9]{8}-WA[0-9]{4}\.[a-z].*")
+    return pattern.match(fname)
 
 ##
 #
