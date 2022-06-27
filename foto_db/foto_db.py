@@ -163,31 +163,39 @@ def img_replace_img_db(nuevo_filename, existing_img, user):
         # Añadir nuevo nombre a duplicados
         img_duplicado_db(old_filename, existing_img)
 
-def img_revision_db(nuevo_filename, existing_filename, user, tipo):
-    ret=db.lista_revision.find_one({'filename_A': nuevo_filename, 'filename_B': existing_filename})
+def img_revision_db(fn_hash_sz, existing_filename, user, tipo):
+    ret=db.lista_revision.find_one({'hash': fn_hash_sz[1]})
     if ret is None:
         rev_doc = {
-            'filename_A' : nuevo_filename,
-            'filename_B' : existing_filename,
+            'filenames'  : [fn_hash_sz[0]],
+            'reference'  : existing_filename,
+            'hash'       : fn_hash_sz[1],
             'user'       : user,
             'type'       : tipo
         }    
         result=db.lista_revision.insert_one(rev_doc)
         print("Imagenes {0} => Coleccion Revision: {1}".format(str(rev_doc), str(result.inserted_id)))
+    elif fn_hash_sz[0] not in ret['filenames']:
+        result=db.lista_revision.update_one({'hash': fn_hash_sz[1]}, {'$push': {'filenames': fn_hash_sz[0]}})
+        print("Imagenes {0} => Coleccion Revision: {1}".format(str(ret), str(result.acknowledged)))
     else:
         print("Imagenes ya estan en Coleccion Revision: " + str(ret))    
 
-def img_duplicado_db(nuevo_filename, existing_img, user, tipo):
-    ret=db.lista_duplicados.find_one({'filename': nuevo_filename, 'reference': existing_img})
+def img_duplicado_db(fn_hash_sz, existing_img, user, tipo):
+    ret=db.lista_duplicados.find_one({'hash': fn_hash_sz[1]})
     if ret is None:
         rev_doc = {
-            'filename' : nuevo_filename,
-            'reference' : existing_img['filename'],
+            'filenames'  : [fn_hash_sz[0]],
+            'reference'  : existing_img['filename'],
+            'hash'       : fn_hash_sz[1],
             'user'       : user,
             'type'       : tipo            
         }    
         result=db.lista_duplicados.insert_one(rev_doc)
-        print("Imagen {0} => Coleccion Duplicados: {1}".format(str(rev_doc), str(result.inserted_id)))
+        print("ADDED Imagen {0} => Coleccion Duplicados: {1}".format(str(rev_doc), str(result.inserted_id)))
+    elif fn_hash_sz[0] not in ret['filenames']:
+        result=db.lista_duplicados.update_one({'hash': fn_hash_sz[1]}, {'$push': {'filenames': fn_hash_sz[0]}})
+        print("UPDATED Imagen {0} => Coleccion Duplicados: {1}".format(str(ret), str(result.acknowledged)))
     else:    
         print("Imagen duplicada ya esta en Coleccion Duplicados: {0}".format(str(ret)))
 

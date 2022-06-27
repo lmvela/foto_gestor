@@ -40,20 +40,20 @@ def crear_foto_devel_set(original_catalogo, devel_catalogo, num_files_devel_set)
 ##
 #
 ##
-def crear_foto_devel_dup(img_user_demo_list):
+def crear_foto_devel_dup(img_user_demo_list, dup_folder_name):
     for list_el in img_user_demo_list:
         nom_fichero = nombre_fichero(list_el)
-        f_tgt = list_el.replace(nom_fichero, "dup_mismo_nombre\\" + nom_fichero)
+        f_tgt = list_el.replace(nom_fichero, dup_folder_name + "\\" + nom_fichero)
         copia_file_crea_dirs(list_el, f_tgt)
 
 ##
 #
 ##
-def crear_foto_devel_dup_new_name(img_user_demo_list):
+def crear_foto_devel_dup_new_name(img_user_demo_list, dup_diff_folder_name, filename_postfix):
     for list_el in img_user_demo_list:
         nom_fichero = nombre_fichero(list_el)
         f_tgt_pre, f_tgt_ext = os.path.splitext(nom_fichero)
-        f_tgt = list_el.replace(nom_fichero, "dup_diff_nombre\\" + f_tgt_pre + "_new_name" + f_tgt_ext)
+        f_tgt = list_el.replace(nom_fichero, dup_diff_folder_name + "\\" + f_tgt_pre + filename_postfix + f_tgt_ext)
         copia_file_crea_dirs(list_el, f_tgt)
 
 ##
@@ -82,7 +82,16 @@ def main():
     actualiza_estadisticas_catalogo()
     
     # Use case: Create duplicate with same name. 
-    crear_foto_devel_dup(img_user_demo_list)
+    crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre")
+
+    # Hacemos una clasificacion completa en la BDD devel
+    clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)    
+
+    # actualizamos el documento de estadisticas
+    actualiza_estadisticas_catalogo()
+
+    # Use case: Create duplicate with same name. 
+    crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre_2")
 
     # Hacemos una clasificacion completa en la BDD devel
     clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)    
@@ -91,7 +100,7 @@ def main():
     actualiza_estadisticas_catalogo()
 
     # Use case: Create duplicate with different name. 
-    crear_foto_devel_dup_new_name(img_user_demo_list)
+    crear_foto_devel_dup_new_name(img_user_demo_list, "dup_diff_nombre", "_new_name")
 
     # Hacemos una clasificacion completa en la BDD devel
     clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)    
