@@ -8,6 +8,35 @@ else:
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
 
+
+##
+#
+##
+def clasificacion_completa_desde_zero(dir_a_clasificar):
+    
+    # Primero analizamos imagenes para cada usuario por separado
+    for user in USER_LIST:
+        # Analyzamos ficheros por tipo
+        for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
+            # Get list {file, hash}
+            dir_list_img = os.path.join(dir_a_clasificar, user)
+            img_hash_list = get_list_image_hash(dir_list_img, lista_tipos)
+
+            # Update info in DB
+            for img in img_hash_list:
+                exists_img = img_new_db(img[1], user)
+                print('Existing img {0} is {1}'.format(img[0], str(exists_img)))
+
+                if exists_img is None:
+                    # Es un fichero nuevo que no existe en BD
+                    img_add_db(img, user, tag_tipo)
+                elif exists_img['filename'] == img[0]:
+                    # Es un fichero que ya esta en la BD
+                    img_existing_ok_db(exists_img)
+                else: 
+                    # Es un posible duplicado, procesalo          
+                    proc_duplicado(img[0], exists_img, user, tag_tipo)
+
 ##
 #
 ##
@@ -47,9 +76,10 @@ def es_img_mejor(nuevo_filename, viejo_filename):
 #
 ##
 def main():
-    # Show all extensions in dirtree
-    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
-    print (str(exts))
+
+    print_ext_summary(CATALOGO_ROOT_DIR)
+
+    clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)
 
     # Primero analizamos imagenes para cada usuario por separado
     for user in USER_LIST:

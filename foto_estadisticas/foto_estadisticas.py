@@ -1,5 +1,6 @@
 import os
 import sys
+from datetime import datetime
 
 if sys.platform.startswith('win'):
     sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
@@ -8,32 +9,8 @@ else:
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
 
-##
-#
-##
-def main():
-    print(" Estadisticas DIRECTORIO")
-    print("-------------------------")
-    print("Dir: " + CATALOGO_ROOT_DIR)
-    #exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
-    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
-    print (str(exts))
-    for ext in exts:
-        num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, [ext]))
-        print("Extension {0}:\t{1}\t{2}".format(ext, num, tamaño))
 
-    # Lista estadisticas sobre Directorio
-    tamaño_dir = get_directory_size(CATALOGO_ROOT_DIR)
-    num_ficheros = get_total_file_list(CATALOGO_ROOT_DIR)
-    print("Totales:\t{0}\t{1}".format(num_ficheros, tamaño_dir))
-
-    num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, TIPOS_IMAGEN))
-    print(" Imagenes:\t{0}\t{1}".format(num, tamaño))
-    num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, TIPOS_VIDEO))
-    print(" Videos:\t{0}\t{1}".format(num, tamaño))
-    num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, TIPOS_AUDIO))
-    print(" Audios:\t{0}\t{1}".format(num, tamaño))
-
+def print_estadisticas_db(db_stats):
     # Estadisticas sobre la base de datos
     print("")
     print(" Estadisticas BASE-DATOS")
@@ -61,6 +38,92 @@ def main():
             print(" BORRAR:\t{0}".format(get_typeuser_borrar_count_db(user, tipo)))
             # Numero / tamaño de ficheros duplicados dentro usuario
             print(" DUPLICADOS:\t{0}".format(get_typeuser_duplicados_count_db(user, tipo)))
+
+##
+#
+##
+def actualiza_estadisticas_catalogo():
+    stats_doc = {
+        'datetime'          : datetime.now(),
+        'users'             : get_users_catalogo_db(),
+        'hash_dup_total'    : get_hash_repetidos_catalogo_db(),
+        'hash_dup_user'     : get_hash_repetidos_catalogo_por_user_db(),
+        'total_docs'        : get_all_count_db(),
+        'total_media'       : get_media_count_db(),
+        'total_revisar'     : get_revisar_count_db(),
+        'total_borrar'      : get_borrar_count_db(),
+        'total_dup'         : get_duplicados_count_db(),
+        'user_details'      : get_user_details()
+    }    
+    # Estadisticas sobre la base de datos
+    add_stats_db(stats_doc)
+
+##
+#
+##
+def get_user_details():
+    user_det = {}
+    for user in USER_LIST:
+        user_type_det = {}
+        for name, tipo in LISTA_TIPOS_CATALOGO:
+            file_type_det = {}
+            file_type_det['type_total'] = get_typeuser_count_db(user, tipo)
+            file_type_det['type_media'] = get_typeuser_media_count_db(user, tipo)
+            file_type_det['type_revisar'] = get_typeuser_revisar_count_db(user, tipo)
+            file_type_det['type_borrar'] = get_typeuser_borrar_count_db(user, tipo)
+            file_type_det['type_dup'] = get_typeuser_duplicados_count_db(user, tipo)
+            user_type_det[tipo] = file_type_det
+        user_det[user]=user_type_det
+    return user_det
+    
+##
+#
+##
+def print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files):
+    print(" Estadisticas DIRECTORIO")
+    print("-------------------------")
+    print("Dir: " + CATALOGO_ROOT_DIR)
+
+    # Print extension information
+    print (str(exts))
+    for ext in exts:
+        num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, [ext]))
+        print("Extension {0}:\t{1}\t{2}".format(ext, num, tamaño))
+
+    print("Totales:\t{0}\t{1}".format(n_files, s_files))
+    print(" Audios:\t{0}\t{1}".format(n_aud_files, s_aud_files))    
+    print(" Imagenes:\t{0}\t{1}".format(n_img_files, s_img_files))
+    print(" Videos:\t{0}\t{1}".format(n_vid_files, s_vid_files))
+
+##
+#
+##
+def get_files_info(root_dir):
+    #n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files
+    return get_total_file_list(root_dir), get_directory_size(root_dir), \
+        proc_list_ficheros(get_file_list(root_dir, TIPOS_AUDIO)), \
+        proc_list_ficheros(get_file_list(root_dir, TIPOS_IMAGEN)), \
+        proc_list_ficheros(get_file_list(root_dir, TIPOS_VIDEO))
+
+##
+#
+##
+def main():
+    # Get list of extensions in the catalog
+    #exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
+    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
+
+    # Get Catalog files in catalog
+    n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files = \
+        get_files_info(CATALOGO_ROOT_DIR)
+
+    # Print results
+    print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files)
+
+
+
+
+
 
     # Numero / tamaño de ficheros duplicados entre usuarios
 

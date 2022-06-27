@@ -2,6 +2,11 @@ import ssl
 from pymongo import DeleteOne, MongoClient
 import sys
 import pprint
+if sys.platform.startswith('win'):
+    sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
+else:
+    sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
+from foto_comun.foto_cfg import *
 
 ##
 # Conecta a DB y devuelve la coleccion
@@ -12,7 +17,26 @@ if sys.platform.startswith('win'):
 # En sistema Linux conectar a la DB NAS
 else:
     client=MongoClient("mongodb://mongodb:mongodb@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
-db=client.clasificador_foto
+
+##
+# Usar DB de produccion o de desarrollo
+##
+if CFG_DEVEL_MODE is True:
+    db=client.clasificador_foto_devel 
+else:
+    db=client.clasificador_foto
+
+
+##
+#   FUNCIONES 
+##
+
+##
+#
+##
+def add_stats_db(stats):
+    result=db.lista_estadisticas.insert_one(stats)
+    print("DB-ADDED new stats {0} to db: {1}".format(str(stats), str(result.inserted_id)))    
 
 ##
 #
@@ -114,7 +138,7 @@ def img_add_db(img_hash, user, tag_tipo):
         'type' : tag_tipo
     }
     result=db.lista_media.insert_one(img_doc)
-    print("Add new image {0} to db: {1}".format(str(img_doc), str(result.inserted_id)))
+    print("DB-ADDED new image {0} to db: {1}".format(str(img_doc), str(result.inserted_id)))
 
 def img_borrar(img_filename, exists_img_Filename):
     ret=db.lista_borrar.find_one({'filename': img_filename})
