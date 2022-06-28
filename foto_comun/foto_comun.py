@@ -81,8 +81,40 @@ BACKUP_FILES_TOKENS = ['(', ')', 'backup', 'copy', 'copia', '~']
 BACKUP_FOLDER_TOKENS = ['backup', 'copy', 'copia']
 
 ##
+# OP CODE Enum
+##
+KEEP_RIGHT = 1
+KEEP_LEFT = 2
+KEEP_BOTH = 3
+KEEP_NONE = 4
+CLOSE_REVISION = 5
+CLOSED_WINDOW = 6
+REVISION_FINISHED_OK = 7
+
+##
 #   Funciones communes
 ##
+
+##
+#
+##
+def interpreta_op_code_plataforma(op_code):
+    if sys.platform.startswith('win'):
+        if op_code == 2555904:  return KEEP_RIGHT           # Right arrow
+        if op_code == 2424832:  return KEEP_LEFT            # Left arrow
+        if op_code == 2490368:  return KEEP_BOTH            # Up arrow
+        if op_code == 2621440:  return KEEP_NONE            # Down arrow
+        if op_code == 99:       return CLOSE_REVISION       # 'c'
+        if op_code == 27:       return CLOSE_REVISION       # ESC
+        if op_code == -1:       return CLOSED_WINDOW        # User closes window
+    else:
+        if op_code == 2555904:  return KEEP_RIGHT           # Right arrow
+        if op_code == 2424832:  return KEEP_LEFT            # Left arrow
+        if op_code == 2490368:  return KEEP_BOTH            # Up arrow
+        if op_code == 2621440:  return KEEP_NONE            # Down arrow
+        if op_code == 99:       return CLOSE_REVISION       # 'c'
+        if op_code == 27:       return CLOSE_REVISION       # ESC
+        if op_code == -1:       return CLOSED_WINDOW        # User closes window
 
 ##
 #

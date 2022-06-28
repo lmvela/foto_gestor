@@ -16,28 +16,28 @@ def print_estadisticas_db(db_stats):
     print(" Estadisticas BASE-DATOS")
     print("-------------------------")
     print("Lista users en catalogo: " + str(get_users_catalogo_db()))
-    print("Numero hash repetidos (cross-user): " + str(get_hash_repetidos_catalogo_db()))
-    print("Numero hash repetidos (por user):" + str(get_hash_repetidos_catalogo_por_user_db()))
+    print("Numero hash repetidos (cross-user): " + str(count_hash_repetidos_catalogo_db()))
+    print("Numero hash repetidos (por user):" + str(count_hash_repetidos_catalogo_por_user_db()))
 
-    print("Numero total de documentos: " + str(get_all_count_db()))
-    print("Numero total de documentos a CATALOGO: " + str(get_media_count_db()))
-    print("Numero total de documentos a REVISAR: " + str(get_revisar_count_db()))
-    print("Numero total de documentos a BORRAR: " + str(get_borrar_count_db()))
-    print("Numero total de documentos DUPLICADOS: " + str(get_duplicados_count_db()))
+    print("Numero total de documentos: " + str(count_all_docs_db()))
+    print("Numero total de documentos a CATALOGO: " + str(count_media_docs_db()))
+    print("Numero total de documentos a REVISAR: " + str(count_revisar_docs_db()))
+    print("Numero total de documentos a BORRAR: " + str(count_borrar_docs_db()))
+    print("Numero total de documentos DUPLICADOS: " + str(count_duplicados_docs_db()))
     for user in USER_LIST:
         print("Usuario:\t" + user)
         for _, tipo in LISTA_TIPOS_CATALOGO:
             print("Tipo:\t\t" + tipo)
             # Numero / tamaño de ficheros / fotos / videos / audios por usuario
-            print(" TOTAL:\t\t{0}".format(get_typeuser_count_db(user, tipo)))
+            print(" TOTAL:\t\t{0}".format(count_typeuser_docs_db(user, tipo)))
             # Numero / tamaño de ficheros en CATALOGO
-            print(" CATALOGO:\t{0}".format(get_typeuser_media_count_db(user, tipo)))
+            print(" CATALOGO:\t{0}".format(count_typeuser_media_docs_db(user, tipo)))
             # Numero / tamaño de ficheros a revisar
-            print(" REVISAR:\t{0}".format(get_typeuser_revisar_count_db(user, tipo)))
+            print(" REVISAR:\t{0}".format(count_typeuser_revisar_docs_db(user, tipo)))
             # Numero / tamaño de ficheros a borrar
-            print(" BORRAR:\t{0}".format(get_typeuser_borrar_count_db(user, tipo)))
+            print(" BORRAR:\t{0}".format(count_typeuser_borrar_docs_db(user, tipo)))
             # Numero / tamaño de ficheros duplicados dentro usuario
-            print(" DUPLICADOS:\t{0}".format(get_typeuser_duplicados_count_db(user, tipo)))
+            print(" DUPLICADOS:\t{0}".format(count_typeuser_duplicados_docs_db(user, tipo)))
 
 ##
 #
@@ -46,13 +46,13 @@ def actualiza_estadisticas_catalogo():
     stats_doc = {
         'datetime'          : datetime.now(),
         'users'             : get_users_catalogo_db(),
-        'hash_dup_total'    : get_hash_repetidos_catalogo_db(),
-        'hash_dup_user'     : get_hash_repetidos_catalogo_por_user_db(),
-        'total_docs'        : get_all_count_db(),
-        'total_media'       : get_media_count_db(),
-        'total_revisar'     : get_revisar_count_db(),
-        'total_borrar'      : get_borrar_count_db(),
-        'total_dup'         : get_duplicados_count_db(),
+        'hash_dup_total'    : count_hash_repetidos_catalogo_db(),
+        'hash_dup_user'     : count_hash_repetidos_catalogo_por_user_db(),
+        'total_docs'        : count_all_docs_db(),
+        'total_media'       : count_media_docs_db(),
+        'total_revisar'     : count_revisar_docs_db(),
+        'total_borrar'      : count_borrar_docs_db(),
+        'total_dup'         : count_duplicados_docs_db(),
         'user_details'      : get_user_details()
     }    
     # Estadisticas sobre la base de datos
@@ -67,11 +67,11 @@ def get_user_details():
         user_type_det = {}
         for name, tipo in LISTA_TIPOS_CATALOGO:
             file_type_det = {}
-            file_type_det['type_total'] = get_typeuser_count_db(user, tipo)
-            file_type_det['type_media'] = get_typeuser_media_count_db(user, tipo)
-            file_type_det['type_revisar'] = get_typeuser_revisar_count_db(user, tipo)
-            file_type_det['type_borrar'] = get_typeuser_borrar_count_db(user, tipo)
-            file_type_det['type_dup'] = get_typeuser_duplicados_count_db(user, tipo)
+            file_type_det['type_total'] = count_typeuser_docs_db(user, tipo)
+            file_type_det['type_media'] = count_typeuser_media_docs_db(user, tipo)
+            file_type_det['type_revisar'] = count_typeuser_revisar_docs_db(user, tipo)
+            file_type_det['type_borrar'] = count_typeuser_borrar_docs_db(user, tipo)
+            file_type_det['type_dup'] = count_typeuser_duplicados_docs_db(user, tipo)
             user_type_det[tipo] = file_type_det
         user_det[user]=user_type_det
     return user_det

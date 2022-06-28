@@ -18,24 +18,25 @@ def clasificacion_completa_desde_zero(dir_a_clasificar):
     for user in USER_LIST:
         # Analyzamos ficheros por tipo
         for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
-            # Get list {file, hash}
+            # Get list {file, hash, size}
             dir_list_img = os.path.join(dir_a_clasificar, user)
             img_hash_list = get_list_image_hash(dir_list_img, lista_tipos)
 
             # Update info in DB
-            for img in img_hash_list:
-                exists_img = img_new_db(img[1], user)
-                print('Existing img {0} is {1}'.format(img[0], str(exists_img)))
+            for fn_hash_sz in img_hash_list:
+                # Retorna un doc de lista_media
+                exists_img = get_media_hash_user_db(fn_hash_sz[1], user)
+                print('Existing img {0} is {1}'.format(fn_hash_sz[0], str(exists_img)))
 
                 if exists_img is None:
                     # Es un fichero nuevo que no existe en BD
-                    img_add_db(img, user, tag_tipo)
-                elif exists_img['filename'] == img[0]:
+                    add_img_catalogo_db(fn_hash_sz, user, tag_tipo)
+                elif exists_img['filename'] == fn_hash_sz[0]:
                     # Es un fichero que ya esta en la BD
                     img_existing_ok_db(exists_img)
                 else: 
                     # Es un posible duplicado, procesalo          
-                    proc_duplicado(img[0], exists_img, user, tag_tipo)
+                    proc_duplicado(fn_hash_sz, exists_img, user, tag_tipo)
 
 ##
 #
@@ -52,16 +53,13 @@ def get_list_image_hash(root_dir, lista_tipos):
 ##
 #
 ##
-def proc_duplicado(nuevo_filename, existing_img, user, tipo):
-    if nombre_fichero(nuevo_filename) != nombre_fichero(existing_img['filename']):
+def proc_duplicado(fn_hash_sz, existing_img, user, tipo):
+    if nombre_fichero(fn_hash_sz[0]) != nombre_fichero(existing_img['filename']):
         # ATENCION: Mismo hash pero distinto nombre: Hay que analizar manualmente
-        img_revision_db(nuevo_filename, existing_img['filename'], user, tipo)
-    elif es_img_mejor(nuevo_filename, existing_img['filename']):
-        # comprobar si nuevo_filename es "mejor" que el que hay en Bd
-        img_replace_img_db(nuevo_filename, existing_img)
+        add_img_revision_db(fn_hash_sz, existing_img['filename'], user, tipo)
     else:
         # se trata de un duplicado
-        img_duplicado_db(nuevo_filename, existing_img, user, tipo)
+        add_img_duplicado_db(fn_hash_sz, existing_img, user, tipo)
         
 ##
 #
@@ -76,33 +74,8 @@ def es_img_mejor(nuevo_filename, viejo_filename):
 #
 ##
 def main():
-
     print_ext_summary(CATALOGO_ROOT_DIR)
-
     clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)
-
-    # Primero analizamos imagenes para cada usuario por separado
-    for user in USER_LIST:
-        # Analyzamos ficheros por tipo
-        for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
-            # Get list {file, hash}
-            img_hash_list = get_list_image_hash(CATALOGO_ROOT_DIR + '/' + user + '/', lista_tipos)
-
-            # Update info in DB
-            for img in img_hash_list:
-                exists_img = img_new_db(img[1], user)
-                print('Existing img {0} is {1}'.format(img[0], str(exists_img)))
-
-                if exists_img is None:
-                    # Es un fichero nuevo que no existe en BD
-                    img_add_db(img, user, tag_tipo)
-                elif exists_img['filename'] == img[0]:
-                    # Es un fichero que ya esta en la BD
-                    img_existing_ok_db(exists_img)
-                else: 
-                    # Es un posible duplicado, procesalo          
-                    proc_duplicado(img[0], exists_img, user, tag_tipo)
-
 
 if __name__ == "__main__":
     main()
