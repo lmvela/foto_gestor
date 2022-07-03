@@ -11,18 +11,6 @@ from foto_comun.foto_comun import *
 ##
 #
 ##
-def get_list_image_hash(root_dir, lista_tipos):
-    ret_list = []
-    file_list = get_file_list(root_dir, lista_tipos)
-    for filename in file_list:
-        hash = calculate_hash(filename)
-        size = os.path.getsize(filename)
-        ret_list.append((filename, hash, size, type))
-    return ret_list
-
-##
-#
-##
 def main():
 
     # Analizamos imagenes para cada usuario por separado

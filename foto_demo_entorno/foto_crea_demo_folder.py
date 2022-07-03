@@ -108,31 +108,5 @@ def main():
     # actualizamos el documento de estadisticas
     actualiza_estadisticas_catalogo()
 
-'''
-
-    # Use case: Create duplicate with same name. In whatsapp folder. 
-    for usr, list_el in img_user_demo_list:
-        for el in list_el:
-            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
-            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_whatsapp")
-            copia_file_crea_dirs(el, f_tgt)            
-
-    # Use case: Create duplicate with same name. In Sent folder. 
-    for usr, list_el in img_user_demo_list:
-        for el in list_el:
-            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
-            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_whatsapp\\Sent")
-            copia_file_crea_dirs(el, f_tgt)            
-
-    # Use case: Create whatsapp like naming
-    for usr, list_el in img_user_demo_list:
-        for el in list_el:
-            f_tgt = el.replace(ROOT_DIR, ROOT_DIR_DEMO)
-            f_tgt = f_tgt.replace(usr, usr + "\\" + usr + "_dup_diff_nombre")
-            copia_file_crea_dirs(el, f_tgt)
-            f_tgt_pre, f_tgt_ext = os.path.splitext(f_tgt)
-            os.rename(f_tgt, f_tgt_pre + "_new_name" + f_tgt_ext)            
-'''
-
 if __name__ == "__main__":
     main()

@@ -48,9 +48,11 @@ def genera_imagen_combinada(img_1, img_2, barra_medio=50):
 ##
 #
 ##
-def muestra_img_recibe_op(imS, user, fn_1, fn_2):
+def muestra_img_recibe_op(tipo_media, total_dup_fns, current_dup_fn, total_dups, current_dup, imS, user, fn_1, fn_2):
 
-    WindowName=user + " => REF: " + fn_1.replace(FOTO_GEST_ROOT_DIR, "") + " vs DUP: " + fn_2.replace(FOTO_GEST_ROOT_DIR, "")
+    WindowName=user + " " + tipo_media + " " + str(current_dup) + "/" + str(total_dups) +  " " +\
+        str(current_dup_fn) + "/" + str(total_dup_fns) + " " +\
+        " => REF: " + fn_1.replace(FOTO_GEST_ROOT_DIR, "") + " vs DUP: " + fn_2.replace(FOTO_GEST_ROOT_DIR, "")
 
     # These line will force the window to be on top with focus.
     cv2.namedWindow(WindowName)
@@ -63,7 +65,7 @@ def muestra_img_recibe_op(imS, user, fn_1, fn_2):
     op_code = interpreta_op_code_plataforma(op_code)
 
     # Close window if it has not been closed
-    if op_code != -1:
+    if op_code != CLOSED_WINDOW:
         cv2.destroyWindow(WindowName)      
     return op_code
 
@@ -141,25 +143,47 @@ def procesa_duplicado(dup, fn_delete_list):
 # Funcion principal para procesar duplicados.
 # input: usuario y lista de duplicados a procesar
 ##
-def procesa_dups(user, dup_list):
-
+def procesa_dups_tipos(user, dup_list, tipo_media):
+    current_dup = 0
     for dup in dup_list:
+        total_dups = dup_list.retrieved
         fn_delete_list = []
+        current_dup = current_dup + 1
+
+        current_dup_fn = 0
+        total_dup_fns = len(dup['filenames'])
         for fn in dup['filenames']:
             fn_1 = dup['reference']
             fn_2 = fn
-            img_1 = cv2.imread(fn_1)
-            img_2 = cv2.imread(fn_2)
+            img_loaded_ok = True
+            current_dup_fn = current_dup_fn + 1
+
+            # Recupera imagen para crear imagen combinada de revision
+            if tipo_media==TAG_TIPO_IMAGEN or tipo_media==TAG_TIPO_MINIATURAS:
+                img_1 = cv2.imread(fn_1)
+                img_2 = cv2.imread(fn_2)
+            elif tipo_media==TAG_TIPO_VIDEO:
+                vidcap_1 = cv2.VideoCapture(fn_1)
+                success_1,img_1 = vidcap_1.read()
+                vidcap_2 = cv2.VideoCapture(fn_2)
+                success_2,img_2 = vidcap_2.read()
+                # Si no podemos recuperar los primeros frames del video
+                if success_2==False or success_1==False:
+                    img_loaded_ok = False
+            else:
+                # No podemos comparar el resto de tipos.
+                img_loaded_ok =False 
             
-            if False: # TBD: if img_1==None or img_2==None:
-                print("ERROR procesa dups. Imagen NULL: {0} {1}". format(str(img_1), str(img_2)))
+            if img_loaded_ok == False: 
+                print("ERROR procesa dups no es posible. Imagenes: {0} {1}". format(str(fn_1), str(fn_2)))
             else:
                 img_revision = genera_imagen_combinada(img_1, img_2)
                 imS = ResizeWithAspectRatio(img_revision, width=960)
-                op_code = muestra_img_recibe_op(imS, user, fn_1, fn_2)
+                op_code = muestra_img_recibe_op(tipo_media, total_dup_fns, current_dup_fn, \
+                    total_dups, current_dup, imS, user, fn_1, fn_2)
 
                 if op_code == CLOSE_REVISION:
-                    sys.exit()  
+                    return CLOSE_REVISION  
 
                 if op_code == KEEP_RIGHT:
                     fn_delete_list.append(fn_1)
@@ -184,12 +208,25 @@ def main():
 
     # Revisamos imagenes para cada usuario por separado
     for user in USER_LIST:
-        # Recibe los duplicados para un usuario concreto y procesalos
-        dup_list = get_dups_user_db(user, 'IMG')
-        op_code = procesa_dups(user, dup_list)
-
+        # Recibe los duplicados para un usuario concreto / tipo de media y procesalos
+        # Imagenes
+        dup_list = get_dups_user_type_db(user, TAG_TIPO_IMAGEN)
+        op_code = procesa_dups_tipos(user, dup_list, TAG_TIPO_IMAGEN)
         if op_code == CLOSE_REVISION:
             sys.exit()
+        # Video
+        dup_list = get_dups_user_type_db(user, TAG_TIPO_VIDEO)
+        op_code = procesa_dups_tipos(user, dup_list, TAG_TIPO_VIDEO)
+        if op_code == CLOSE_REVISION:
+            sys.exit()
+        # Miniaturas
+        dup_list = get_dups_user_type_db(user, TAG_TIPO_MINIATURAS)
+        op_code = procesa_dups_tipos(user, dup_list, TAG_TIPO_MINIATURAS)
+        if op_code == CLOSE_REVISION:
+            sys.exit()
+
+        # AUDIOS no los procesamos manualmente
+
         
 if __name__ == "__main__":
     main()

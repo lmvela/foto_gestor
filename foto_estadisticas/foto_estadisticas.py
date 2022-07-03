@@ -53,6 +53,9 @@ def actualiza_estadisticas_catalogo():
         'total_revisar'     : count_revisar_docs_db(),
         'total_borrar'      : count_borrar_docs_db(),
         'total_dup'         : count_duplicados_docs_db(),
+        'size_media'        : get_size_media_db(),
+        'size_revisar'      : get_size_rev_db(),
+        'size_dup'          : get_size_dup_db(),
         'user_details'      : get_user_details()
     }    
     # Estadisticas sobre la base de datos
@@ -99,11 +102,12 @@ def print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_i
 #
 ##
 def get_files_info(root_dir):
-    #n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files
-    return get_total_file_list(root_dir), get_directory_size(root_dir), \
-        proc_list_ficheros(get_file_list(root_dir, TIPOS_AUDIO)), \
-        proc_list_ficheros(get_file_list(root_dir, TIPOS_IMAGEN)), \
-        proc_list_ficheros(get_file_list(root_dir, TIPOS_VIDEO))
+    n_files = get_total_file_list(root_dir) 
+    s_files = get_directory_size(root_dir)
+    n_aud_files, s_aud_files = proc_list_ficheros(get_file_list(root_dir, TIPOS_AUDIO))
+    n_img_files, s_img_files = proc_list_ficheros(get_file_list(root_dir, TIPOS_IMAGEN))
+    n_vid_files, s_vid_files = proc_list_ficheros(get_file_list(root_dir, TIPOS_VIDEO))
+    return n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files
 
 ##
 #
@@ -120,15 +124,8 @@ def main():
     # Print results
     print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files)
 
-
-
-
-
-
-    # Numero / tamaño de ficheros duplicados entre usuarios
-
-
-    # Comparativa directorio - Base de datos
+    # Actualiza tabla estadisticas DB
+    actualiza_estadisticas_catalogo()
     
 if __name__ == "__main__":
     main()

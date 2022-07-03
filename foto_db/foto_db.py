@@ -43,13 +43,14 @@ def add_stats_db(stats):
 ##
 # Añade una imagen nueva al catalogo
 ##
-def add_img_catalogo_db(img_hash, user, tag_tipo):
+def add_img_catalogo_db(img_hash, user, tag_tipo, media_origen):
     img_doc = {
         'filename' : img_hash[0],
         'hash' : img_hash[1],
         'size' : img_hash[2],
         'user' : user,
-        'type' : tag_tipo
+        'type' : tag_tipo,
+        'source' : media_origen
     }
     result=db.lista_media.insert_one(img_doc)
     print("DB-ADDED new image {0} to db: {1}".format(str(img_doc), str(result.inserted_id)))
@@ -81,7 +82,8 @@ def add_img_revision_db(fn_hash_sz, existing_filename, user, tipo):
             'reference'  : existing_filename,
             'hash'       : fn_hash_sz[1],
             'user'       : user,
-            'type'       : tipo
+            'type'       : tipo,
+            'size'       : fn_hash_sz[2]
         }    
         result=db.lista_revision.insert_one(rev_doc)
         print("ADDED Imagenes {0} => Coleccion Revision: {1}".format(str(rev_doc), str(result.inserted_id)))
@@ -104,7 +106,8 @@ def add_img_duplicado_db(fn_hash_sz, existing_img, user, tipo):
             'reference'  : existing_img['filename'],
             'hash'       : fn_hash_sz[1],
             'user'       : user,
-            'type'       : tipo            
+            'type'       : tipo,
+            'size'       : fn_hash_sz[2]            
         }    
         result=db.lista_duplicados.insert_one(rev_doc)
         print("ADDED Imagen {0} => Coleccion Duplicados: {1}".format(str(rev_doc), str(result.inserted_id)))
@@ -113,6 +116,55 @@ def add_img_duplicado_db(fn_hash_sz, existing_img, user, tipo):
         print("UPDATED Imagen {0} => Coleccion Duplicados: {1}".format(str(ret), str(result.acknowledged)))
     else:    
         print("Imagen duplicada ya esta en Coleccion Duplicados: {0}".format(str(ret)))
+
+
+###################################################################################################################
+# SIZE CALCULATIONS methods
+##
+def get_size_media_db():
+    pipeline = [
+        { "$match": {} }, 
+        { "$group": { "_id": None, "sum": {"$sum": "$size"}}}
+    ]
+
+    results = db.lista_media.aggregate(pipeline)
+    try:
+        record = results.next()
+    except StopIteration:
+        print("get_size_media_db: empty cursor")
+
+    pprint.pprint(record['sum'])
+    return record['sum']
+
+def get_size_rev_db():
+    pipeline = [
+        { "$match": {} }, 
+        { "$group": { "_id": None, "sum": {"$sum": "$size"}}}
+    ]
+
+    results = db.lista_revision.aggregate(pipeline)
+    try:
+        record = results.next()
+    except StopIteration:
+        print("get_size_media_db: empty cursor")
+
+    pprint.pprint(record['sum'])
+    return record['sum']
+
+def get_size_dup_db():
+    pipeline = [
+        { "$match": {} }, 
+        { "$group": { "_id": None, "sum": {"$sum": "$size"}}}
+    ]
+
+    results = db.lista_duplicados.aggregate(pipeline)
+    try:
+        record = results.next()
+    except StopIteration:
+        print("get_size_media_db: empty cursor")
+
+    pprint.pprint(record['sum'])
+    return record['sum']
 
 ###################################################################################################################
 # COUNT methods
@@ -196,7 +248,13 @@ def get_all_revision_db():
 ##
 # Devuelve la lista de duplicados para un user en concreto
 ##
-def get_dups_user_db(user, type):
+def get_dups_user_db(user):
+    return db.lista_duplicados.find({ "user": { "$eq": user }})
+
+##
+# Devuelve la lista de duplicados para un user y un tipo de datos en concreto
+##
+def get_dups_user_type_db(user, type):
     return db.lista_duplicados.find({ "user": { "$eq": user }, "type": { "$eq": type }})
 
 ##
