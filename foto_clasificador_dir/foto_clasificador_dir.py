@@ -14,7 +14,22 @@ from foto_db.foto_db import *
 ##
 def get_fn_source(fn):
     # CAMARA
-    x=re.compile('IMG_[0-9]{8}_[0-9]{6}')
+    x=re.compile('C360_[0-9]{4})-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{3}\.')
+    if x.match(fn):      
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}\.[0-9]{2}\.[0-9]{2}\.')               # IPAD
+    if x.match(fn):      
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('{IMG|VID}_[0-9]{8}_[0-9]{6}')
+    if x.match(fn):
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('PANO_[0-9]{8}_[0-9]{6}')
+    if x.match(fn):
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('MVI_[0-9]{4}\.')
+    if x.match(fn):
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('P1[0-9]{6}\.')
     if x.match(fn):
         return TAG_ORIGEN_CAMARA
     x=re.compile('[0-9]{8}_[0-9]{6}\.')   # Camara Smsung S20FE
@@ -23,7 +38,19 @@ def get_fn_source(fn):
     x=re.compile('DSCN[0-9]{3}\.')
     if x.match(fn):
         return TAG_ORIGEN_CAMARA
+    x=re.compile('DSC_[0-9]{4}\.')
+    if x.match(fn):
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('DSC[0-9]{5}\.')
+    if x.match(fn):
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('Imagen [0-9]{3}\.')
+    if x.match(fn):
+        return TAG_ORIGEN_CAMARA
     x=re.compile('IMG_[0-9]{4}\.')
+    if x.match(fn):
+        return TAG_ORIGEN_CAMARA
+    x=re.compile('IMG [0-9]{4}\.')
     if x.match(fn):
         return TAG_ORIGEN_CAMARA
     x=re.compile('IMG[0-9]{4}\.')
@@ -35,6 +62,9 @@ def get_fn_source(fn):
 
     #Whatsapp
     x=re.compile('IMG-[0-9]{8}-WA[0-9]{4}')
+    if x.match(fn):
+        return TAG_ORIGEN_WAPP
+    x=re.compile('VID-[0-9]{8}-WA[0-9]{4}')
     if x.match(fn):
         return TAG_ORIGEN_WAPP
 
