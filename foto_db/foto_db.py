@@ -160,11 +160,11 @@ def get_size_dup_db():
     results = db.lista_duplicados.aggregate(pipeline)
     try:
         record = results.next()
+        pprint.pprint(record['sum'])
+        return record['sum']
     except StopIteration:
         print("get_size_media_db: empty cursor")
-
-    pprint.pprint(record['sum'])
-    return record['sum']
+        return 0
 
 ###################################################################################################################
 # COUNT methods
