@@ -75,38 +75,15 @@ def main():
     # Creamos un set duplicado para la validacion: Usamos el catalogo real como fuente
     img_user_demo_list = crear_foto_devel_set(FOTO_GEST_CATALGO_ORIGINAL, CATALOGO_ROOT_DIR, 10)
 
-    # Hacemos una clasificacion completa en la BDD devel
-    clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)
-
-    # actualizamos el documento de estadisticas
-    actualiza_estadisticas_catalogo()
-    
     # Use case: Create duplicate with same name. 
     crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre")
-
-    # Hacemos una clasificacion completa en la BDD devel
-    clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)    
-
-    # actualizamos el documento de estadisticas
-    actualiza_estadisticas_catalogo()
 
     # Use case: Create duplicate with same name. 
     crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre_2")
 
-    # Hacemos una clasificacion completa en la BDD devel
-    clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)    
-
-    # actualizamos el documento de estadisticas
-    actualiza_estadisticas_catalogo()
-
     # Use case: Create duplicate with different name. 
     crear_foto_devel_dup_new_name(img_user_demo_list, "dup_diff_nombre", "_new_name")
 
-    # Hacemos una clasificacion completa en la BDD devel
-    clasificacion_completa_desde_zero(CATALOGO_ROOT_DIR)    
-
-    # actualizamos el documento de estadisticas
-    actualiza_estadisticas_catalogo()
 
 if __name__ == "__main__":
     main()
