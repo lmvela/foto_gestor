@@ -3,6 +3,7 @@ from pymongo import DeleteOne, MongoClient
 import sys
 import pprint
 from bson.objectid import ObjectId
+from datetime import datetime
 
 if sys.platform.startswith('win'):
     sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
@@ -43,14 +44,17 @@ def add_stats_db(stats):
 ##
 # Añade una imagen nueva al catalogo
 ##
-def add_img_catalogo_db(img_hash, user, tag_tipo, media_origen):
+def add_img_catalogo_db(img_hash, user, tag_tipo, media_origen, media_dt):
     img_doc = {
         'filename' : img_hash[0],
         'hash' : img_hash[1],
         'size' : img_hash[2],
         'user' : user,
         'type' : tag_tipo,
-        'source' : media_origen
+        'source' : media_origen,
+        'datetime' : media_dt[1],
+        'datetime_origen' : media_dt[0],
+        'clasif_datetime' : datetime.now() 
     }
     result=db.lista_media.insert_one(img_doc)
     print("DB-ADDED new image {0} to db: {1}".format(str(img_doc), str(result.inserted_id)))
