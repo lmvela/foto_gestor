@@ -103,6 +103,14 @@ REVISION_FINISHED_OK = 7
 SKIP_REVISION = 8
 
 ##
+# ORIGEN del datetime
+##
+TAG_DT_ORIGIN_EXIF = 'exif'
+TAG_DT_ORIGIN_FN = 'filename'
+TAG_DT_ORIGIN_OS = 'os'
+TAG_DT_ORIGIN_UNKNOWN = 'unknown'
+
+##
 #   Funciones communes
 ##
 
