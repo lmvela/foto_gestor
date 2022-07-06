@@ -10,7 +10,7 @@ from foto_comun.foto_comun import *
 from foto_db.foto_db import *
 
 
-def print_estadisticas_db(db_stats):
+def print_estadisticas_db():
     # Estadisticas sobre la base de datos
     print("")
     print(" Estadisticas BASE-DATOS")
@@ -82,7 +82,7 @@ def get_user_details():
 ##
 #
 ##
-def print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files):
+def print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files):
     print(" Estadisticas DIRECTORIO")
     print("-------------------------")
     print("Dir: " + CATALOGO_ROOT_DIR)
@@ -97,6 +97,8 @@ def print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_i
     print(" Audios:\t{0}\t{1}".format(n_aud_files, s_aud_files))    
     print(" Imagenes:\t{0}\t{1}".format(n_img_files, s_img_files))
     print(" Videos:\t{0}\t{1}".format(n_vid_files, s_vid_files))
+    print(" Miniaturas:\t{0}\t{1}".format(n_min_files, s_min_files))
+    print("N files check: " + str(n_aud_files+n_img_files+n_vid_files+n_min_files) + "/" + str(n_files))
 
 ##
 #
@@ -107,7 +109,8 @@ def get_files_info(root_dir):
     n_aud_files, s_aud_files = proc_list_ficheros(get_file_list(root_dir, TIPOS_AUDIO))
     n_img_files, s_img_files = proc_list_ficheros(get_file_list(root_dir, TIPOS_IMAGEN))
     n_vid_files, s_vid_files = proc_list_ficheros(get_file_list(root_dir, TIPOS_VIDEO))
-    return n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files
+    n_min_files, s_min_files = proc_list_ficheros(get_file_list(root_dir, TIPOS_MINIATURAS))
+    return n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files
 
 ##
 #
@@ -118,14 +121,16 @@ def main():
     exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
 
     # Get Catalog files in catalog
-    n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files = \
+    n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files = \
         get_files_info(CATALOGO_ROOT_DIR)
 
     # Print results
-    print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files)
+    print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files)
 
     # Actualiza tabla estadisticas DB
     actualiza_estadisticas_catalogo()
+    # Print por pantalla
+    print_estadisticas_db()
     
 if __name__ == "__main__":
     main()

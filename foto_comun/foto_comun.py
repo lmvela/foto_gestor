@@ -155,6 +155,7 @@ def is_file_whatsapp(fname):
 ##
 def copia_file_crea_dirs(src_fpath, dest_fpath):
     os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
+    print("Copy: " + src_fpath + " -> " + dest_fpath)
     shutil.copy(src_fpath, dest_fpath)
 
 ##

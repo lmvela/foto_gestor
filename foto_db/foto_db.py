@@ -140,7 +140,7 @@ def get_size_media_db():
     except StopIteration:
         print("get_size_media_db: empty cursor")
 
-    pprint.pprint(record['sum'])
+    #pprint.pprint(record['sum'])
     return record['sum']
 
 def get_size_rev_db():
@@ -155,7 +155,7 @@ def get_size_rev_db():
     except StopIteration:
         print("get_size_media_db: empty cursor")
 
-    pprint.pprint(record['sum'])
+    #pprint.pprint(record['sum'])
     return record['sum']
 
 def get_size_dup_db():
@@ -227,7 +227,7 @@ def count_hash_repetidos_catalogo_por_user_db():
         {"$group": { "_id": {"hash":"$hash", "user":"$user"}, "count": {"$sum": 1}}},
         {"$match": { "count": {"$gt": 1}}}
     ]
-    pprint.pprint(list(db.lista_media.aggregate(pipeline)))
+    #pprint.pprint(list(db.lista_media.aggregate(pipeline)))
     return len(list(db.lista_media.aggregate(pipeline)))
 
 ###################################################################################################################
