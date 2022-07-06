@@ -174,6 +174,10 @@ def nombre_fichero(path):
 def nombre_fichero_lower(path):
     return nombre_fichero(path).lower()
 
+def extension_fichero(path):
+    filename, file_extension = os.path.splitext(path)
+    return file_extension
+    
 ##
 #
 ##

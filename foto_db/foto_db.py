@@ -4,6 +4,7 @@ import sys
 import pprint
 from bson.objectid import ObjectId
 from datetime import datetime
+import os
 
 if sys.platform.startswith('win'):
     sys.path.append("C:\\work\\02_Pers\\proyectos\\foto_gestor")
@@ -45,8 +46,10 @@ def add_stats_db(stats):
 # Añade una imagen nueva al catalogo
 ##
 def add_img_catalogo_db(img_hash, user, tag_tipo, media_origen, media_dt):
+    filename, file_extension = os.path.splitext(img_hash[0])
     img_doc = {
         'filename' : img_hash[0],
+        'extension' : file_extension,
         'hash' : img_hash[1],
         'size' : img_hash[2],
         'user' : user,
