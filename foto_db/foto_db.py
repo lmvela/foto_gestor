@@ -63,6 +63,23 @@ def add_img_catalogo_db(img_hash, user, tag_tipo, media_origen, media_dt):
     print("DB-ADDED new image {0} to db: {1}".format(str(img_doc), str(result.inserted_id)))
 
 ##
+#   Este fichero es para descartar, ponlo en el doc de descartados
+##
+def add_fn_descartar_db(fn_hash_sz, user, tag_tipo):
+    filename, file_extension = os.path.splitext(fn_hash_sz[0])
+    img_doc = {
+        'filename' : fn_hash_sz[0],
+        'extension' : file_extension,
+        'hash' : fn_hash_sz[1],
+        'size' : fn_hash_sz[2],
+        'user' : user,
+        'type' : tag_tipo,
+        'clasif_datetime' : datetime.now() 
+    }
+    result=db.lista_descartados.insert_one(img_doc)
+    print("DB-ADDED descartado fn {0} to db: {1}".format(str(img_doc), str(result.inserted_id)))
+
+##
 # Añade una imagne a la coll borrar
 ##
 def add_img_borrar_db(img_filename):
@@ -253,6 +270,12 @@ def get_all_revision_db():
     return db.lista_revision.find();
 
 ##
+# Devuelva la lista de ficheros a borrar
+##
+def get_all_borrar_db():
+    return db.lista_borrar.find();
+
+##
 # Devuelve la lista de duplicados para un user en concreto
 ##
 def get_dups_user_db(user):
@@ -303,6 +326,13 @@ def del_dup_db(dup):
 ##
 def del_revisar_db(dup):
     return db.lista_revision.delete_one(dup)
+
+##
+#   Borrar un documento de la lista de borrar
+##
+def del_borrar_db(borr):
+    return db.lista_borrar.delete_one(borr)
+    
 
 ###################################################################################################################
 # UPDATE methods

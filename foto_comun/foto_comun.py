@@ -1,5 +1,4 @@
 import ntpath
-import glob 
 import os
 import hashlib
 import sys
@@ -44,14 +43,15 @@ USER_LIST = ['evd', 'fvd', 'fvg', 'lvg']
 
 ##
 #   Tipos de medios aceptados en el catalogo
+#   {'THM', 'wav', 'jpg', 'MPG', 'rar', 'png', '3gp', 'zip', 'mpo', '3ga', 'gif', 'ARW', 'mpg', 'MOV', 'enc', 'xcf', 'm4v', 'MP4', 'wmv', 'NEF', 'db', 'JPG', 'avi', 'tif', 'mp3', 'AVI', 'bmp', 'm4a', 'webp', 'PDF', 'cr2', 'mov', 'mp4', 'jpeg', 'CR2'}
 ##
 if sys.platform.startswith('win'):
-    TIPOS_IMAGEN = ['bmp', 'jpg', 'png', 'mov', 'gif', 'tif', 'enc', 'mpo', 'nef', 'cr2', 'arw', 'webp', 'xcf']
+    TIPOS_IMAGEN = ['bmp', 'jpg', 'png', 'mov', 'gif', 'tif', 'enc', 'mpo', 'nef', 'cr2', 'arw', 'webp', 'xcf', 'jpeg']
     TIPOS_VIDEO = ['mov', '3gp', 'wmv', 'm4v', 'mp4', 'mpg', 'avi']
     TIPOS_AUDIO = ['gp3', 'mp3', 'wav', 'm4a', '3ga']
     TIPOS_MINIATURAS = ['thm'] 
 else:
-    TIPOS_IMAGEN = ['bmp', 'jpg', 'png', 'MOV', 'JPG', 'gif', 'tif', 'enc', 'mpo', 'NEF', 'cr2', 'CR2', 'ARW', 'webp', 'xcf']
+    TIPOS_IMAGEN = ['bmp', 'jpg', 'png', 'MOV', 'JPG', 'gif', 'tif', 'enc', 'mpo', 'NEF', 'cr2', 'CR2', 'ARW', 'webp', 'xcf', 'jpeg']
     TIPOS_VIDEO = ['MP4', 'mov', 'AVI', 'MPG', '3gp', 'wmv', 'm4v', 'mp4', 'mpg', 'avi']
     TIPOS_AUDIO = ['gp3', 'mp3', 'wav', 'm4a', '3ga']
     TIPOS_MINIATURAS = ['THM'] 
@@ -60,7 +60,7 @@ TAG_TIPO_IMAGEN = 'IMG'
 TAG_TIPO_VIDEO = 'VID'
 TAG_TIPO_AUDIO = 'AUD'
 TAG_TIPO_MINIATURAS = 'MIN'
-
+TAG_TIPO_DESCARTAR = 'DESC'
 
 LISTA_TIPOS_CATALOGO = [
     (TIPOS_IMAGEN, TAG_TIPO_IMAGEN), 
@@ -72,16 +72,21 @@ LISTA_TIPOS_CATALOGO = [
 ##
 #   Tipos de ficheros a descartar
 ##
-TIPOS_PRESENTACIONES = ['psh', 'pxc', 'ppt', 'pps'] 
+TIPOS_PRESENTACIONES = ['psh', 'pxc', 'ppt', 'pps', 'pdf', 'PDF'] 
 TIPOS_BACKUP_DATOS = ['enml', 'pub', 'txt']
-TIPOS_BACKUP_MEDIA = ['jpg_old', 'JPG_old', 'mp4_old', 'zip', 'jpeg_old']
-TIPOS_LIMPIAR = ['html', 'ini', 'lnk']
+TIPOS_BACKUP_MEDIA = ['jpg_old', 'JPG_old', 'mp4_old', 'zip', 'jpeg_old', 'rar']
+TIPOS_LIMPIAR = ['html', 'ini', 'lnk', 'db']
+
+TAG_TIPO_PRESENTACIONES = 'PRES' 
+TAG_TIPO_BACKUP_DATOS = 'DATA'
+TAG_TIPO_BACKUP_MEDIA = 'BMEDIA'
+TAG_TIPO_LIMPIAR = 'DESC'
 
 LISTA_TIPOS_DESCARTAR = [
-    (TIPOS_PRESENTACIONES, 'PRS', 'presentaciones'),
-    (TIPOS_BACKUP_DATOS, 'DAT', 'backup_datos'),
-    (TIPOS_BACKUP_MEDIA, 'BMD', 'backup_media'),
-    (TIPOS_LIMPIAR, 'LIM', 'papelera'),
+    (TIPOS_PRESENTACIONES, TAG_TIPO_PRESENTACIONES),
+    (TIPOS_BACKUP_DATOS, TAG_TIPO_BACKUP_DATOS),
+    (TIPOS_BACKUP_MEDIA, TAG_TIPO_BACKUP_MEDIA),
+    (TIPOS_LIMPIAR, TAG_TIPO_LIMPIAR),
 ]
 
 ##
@@ -203,11 +208,28 @@ def get_total_file_list(root_dir):
 ##
 def get_file_list(root_dir, lista_tipos, max_len=-1):
     ret = []
-    for tipo in lista_tipos:
-        for filename in glob.iglob(root_dir + '/**/*.' + tipo, recursive=True):
-            ret.append(os.path.normpath(filename))
-            if max_len>0 and len(ret)>max_len:
-                return ret
+    for root, dirs, files in os.walk(root_dir):
+        for file in files:
+            ext_fn = extension_fichero(file).replace('.', '')
+            if ext_fn in lista_tipos:
+                ret.append(os.path.normpath(os.path.join(root, file)))
+                if max_len>0 and len(ret)>max_len:                
+                    return ret
+    return ret
+
+##
+#
+##
+def get_file_lists(root_dir, listas_tipos, max_len=-1):
+    ret = []
+    for lista_tipos, tag in listas_tipos:
+        for root, dirs, files in os.walk(root_dir):
+            for file in files:
+                ext_fn = extension_fichero(file).replace('.', '')
+                if ext_fn in lista_tipos:
+                    ret.append(os.path.normpath(os.path.join(root, file)))
+                    if max_len>0 and len(ret)>max_len:                
+                        return ret
     return ret
 
 ##

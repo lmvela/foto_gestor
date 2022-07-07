@@ -117,7 +117,7 @@ def clasificacion_completa_desde_zero(dir_a_clasificar):
     
     # Primero analizamos imagenes para cada usuario por separado
     for user in USER_LIST:
-        # Analyzamos ficheros por tipo
+        # Analyzamos ficheros por tipo (tipos de catalogo)
         for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
             # Get list {file, hash, size}
             dir_list_img = os.path.join(dir_a_clasificar, user)
@@ -139,6 +139,17 @@ def clasificacion_completa_desde_zero(dir_a_clasificar):
                 else: 
                     # Es un posible duplicado, procesalo          
                     proc_duplicado(fn_hash_sz, exists_img, user, tag_tipo)
+
+        # Analyzamos ficheros por tipo (tipos a descartar)
+        for lista_tipos, tag_tipo in LISTA_TIPOS_DESCARTAR:
+            # Get list {file, hash, size}
+            dir_list_img = os.path.join(dir_a_clasificar, user)
+            img_hash_list = get_list_image_hash_sz(dir_list_img, lista_tipos)
+
+            # Update info in DB
+            for fn_hash_sz in img_hash_list:
+                add_fn_descartar_db(fn_hash_sz, user, tag_tipo)
+
 
 ##
 #
