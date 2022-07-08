@@ -31,13 +31,12 @@ def print_estadisticas_db():
             # Numero / tamaño de ficheros / fotos / videos / audios por usuario
             print(" TOTAL:\t\t{0}".format(count_typeuser_docs_db(user, tipo)))
             # Numero / tamaño de ficheros en CATALOGO
-            print(" CATALOGO:\t{0}".format(count_typeuser_media_docs_db(user, tipo)))
-            # Numero / tamaño de ficheros a revisar
-            print(" REVISAR:\t{0}".format(count_typeuser_revisar_docs_db(user, tipo)))
-            # Numero / tamaño de ficheros a borrar
-            print(" BORRAR:\t{0}".format(count_typeuser_borrar_docs_db(user, tipo)))
-            # Numero / tamaño de ficheros duplicados dentro usuario
-            print(" DUPLICADOS:\t{0}".format(count_typeuser_duplicados_docs_db(user, tipo)))
+            print(" Catalogo\Dups\Revs\Borrar:\t{0}\{1}\{2}\{3}".format(\
+                count_typeuser_media_docs_db(user, tipo),\
+                count_typeuser_duplicados_docs_db(user, tipo),\
+                count_typeuser_revisar_docs_db(user, tipo),\
+                count_typeuser_borrar_docs_db(user, tipo),\
+                ))
 
 ##
 #
@@ -82,16 +81,24 @@ def get_user_details():
 ##
 #
 ##
-def print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files):
-    print(" Estadisticas DIRECTORIO")
-    print("-------------------------")
-    print("Dir: " + CATALOGO_ROOT_DIR)
+def print_estadisticas_dir(desc, dir, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files):
+
+    print("")
+    print(" Estadisticas DIRECTORIO: " + desc)
+    print("-----------------------------------------------")
+
+    # Get list of extensions in the catalog
+    #exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
+    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(dir) for f in files if '.' in f) 
 
     # Print extension information
-    print (str(exts))
+    if len(exts) > 0:
+        print (str(exts))
+    
+    # Print number of files per extension
     n_files_ext = 0
     for ext in exts:
-        num, tamaño = proc_list_ficheros(get_file_list(CATALOGO_ROOT_DIR, [ext]))
+        num, tamaño = proc_list_ficheros(get_file_list(dir, [ext]))
         print("Extension {0}:\t{1}\t{2}".format(ext, num, tamaño))
         n_files_ext = n_files_ext + num
     print("Suma Ext\t:\t{0}".format(n_files_ext))
@@ -121,16 +128,30 @@ def get_files_info(root_dir):
 #
 ##
 def main():
-    # Get list of extensions in the catalog
-    #exts = set(f.split('.')[-1].upper() for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
-    exts = set(f.split('.')[-1] for dir,dirs,files in os.walk(CATALOGO_ROOT_DIR) for f in files if '.' in f) 
-
     # Get Catalog files in catalog
     n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files = \
         get_files_info(CATALOGO_ROOT_DIR)
+    print_estadisticas_dir("catalogo", CATALOGO_ROOT_DIR, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files)
 
-    # Print results
-    print_estadisticas_dir(exts, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files)
+    # Get Catalog files in catalog
+    n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files = \
+        get_files_info(IMPORTAR_NUEVOS_DIR)
+    print_estadisticas_dir("importar", IMPORTAR_NUEVOS_DIR, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files)
+
+    # Get Catalog files in catalog
+    n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files = \
+        get_files_info(CUARENTENA_NUEVOS_DIR)
+    print_estadisticas_dir("cuarentena", CUARENTENA_NUEVOS_DIR, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files)
+
+    # Get Catalog files in catalog
+    n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files = \
+        get_files_info(RECHAZADOS_NUEVOS_DIR)
+    print_estadisticas_dir("rechazados", RECHAZADOS_NUEVOS_DIR, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files)
+
+    # Get Catalog files in catalog
+    n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files = \
+        get_files_info(PAPELERA_DIR)
+    print_estadisticas_dir("papelera", PAPELERA_DIR, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files)
 
     # Actualiza tabla estadisticas DB
     actualiza_estadisticas_catalogo()

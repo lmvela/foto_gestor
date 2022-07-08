@@ -18,17 +18,17 @@ def main():
     for user in USER_LIST:
         # Recibe los duplicados para un usuario concreto / tipo de media y procesalos
         # Imagenes
-        dup_list = get_dups_user_type_db(user, TAG_TIPO_IMAGEN)
+        dup_list = get_revs_user_type_db(user, TAG_TIPO_IMAGEN)
         op_code = procesa_dups_tipos(user, dup_list, TAG_TIPO_IMAGEN)
         if op_code == CLOSE_REVISION:
             sys.exit()
         # Video
-        dup_list = get_dups_user_type_db(user, TAG_TIPO_VIDEO)
+        dup_list = get_revs_user_type_db(user, TAG_TIPO_VIDEO)
         op_code = procesa_dups_tipos(user, dup_list, TAG_TIPO_VIDEO)
         if op_code == CLOSE_REVISION:
             sys.exit()
         # Miniaturas
-        dup_list = get_dups_user_type_db(user, TAG_TIPO_MINIATURAS)
+        dup_list = get_revs_user_type_db(user, TAG_TIPO_MINIATURAS)
         op_code = procesa_dups_tipos(user, dup_list, TAG_TIPO_MINIATURAS)
         if op_code == CLOSE_REVISION:
             sys.exit()

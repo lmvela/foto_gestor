@@ -10,10 +10,6 @@ from foto_db.foto_db import *
 from foto_clasificador_dir.foto_clasificador_dir import *
 from foto_estadisticas.foto_estadisticas import *
 
-def copy_file_crear_dir(src_fpath, dest_fpath):
-    os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
-    shutil.copy(src_fpath, dest_fpath)    
-
 ##
 #
 ##

@@ -27,10 +27,18 @@ if CFG_DEVEL_MODE is True:
 else:
     FOTO_GEST_ROOT_DIR = os.path.join(BASE_DIR, '00_fotos') 
 
+EVENTOS_DIR = 'Eventos'
+FECHAS_DIR = 'Fechas'
 CATALOGO_ROOT_DIR = os.path.join(FOTO_GEST_ROOT_DIR, 'catalogo')
 DESCARTAR_ROOT_DIR = os.path.join(FOTO_GEST_ROOT_DIR, 'descartar')
 PAPELERA_DIR = os.path.join(FOTO_GEST_ROOT_DIR, 'papelera')
+IMPORTAR_NUEVOS_DIR = os.path.join(FOTO_GEST_ROOT_DIR, 'importar')
+RECHAZADOS_NUEVOS_DIR = os.path.join(FOTO_GEST_ROOT_DIR, 'rechazados')
+CUARENTENA_NUEVOS_DIR = os.path.join(FOTO_GEST_ROOT_DIR, 'cuarentena')
 
+##
+# Tags dispositivo origen de la imagen
+##
 TAG_ORIGEN_CAMARA = "CAMARA"
 TAG_ORIGEN_WAPP = "WAPP"
 TAG_ORIGEN_DESCONOCIDO = "DESCONOCIDO"
@@ -162,6 +170,12 @@ def copia_file_crea_dirs(src_fpath, dest_fpath):
     os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
     print("Copy: " + src_fpath + " -> " + dest_fpath)
     shutil.copy(src_fpath, dest_fpath)
+
+def mueve_file_con_fecha_crea_dirs(src_fpath, dest_fpath):
+    os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
+    print("Copy: " + src_fpath + " -> " + dest_fpath)
+    shutil.move(src_fpath, dest_fpath)
+
 
 ##
 #

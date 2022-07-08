@@ -23,13 +23,7 @@ def borrar_duplicado(dup):
     # mover duplicado
     os.makedirs(PAPELERA_DIR, exist_ok=True)
     for origen in dup['filenames']:
-        destino = os.path.join(PAPELERA_DIR, nombre_fichero(origen))
-        try:
-            shutil.move(origen, destino)
-            print("MV OK: " + origen + " -> " + destino)
-        except:
-            print("MV ERROR: " + origen + " -> " + destino)
-            return False
+        add_img_borrar_db(origen)
     # Eliminar documento DB
     ret = del_dup_db(dup)
     print("DB duplicados removed: " + str(ret))    
