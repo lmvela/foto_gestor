@@ -7,7 +7,6 @@ else:
     sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
-from foto_clasificador_dir.foto_clasificador_dir import *
 from foto_estadisticas.foto_estadisticas import *
 
 ##
@@ -36,21 +35,29 @@ def crear_foto_devel_set(original_catalogo, devel_catalogo, num_files_devel_set)
 ##
 #
 ##
-def crear_foto_devel_dup(img_user_demo_list, dup_folder_name):
+def crear_foto_devel_dup(img_user_demo_list, dup_folder_name, max_files=0):
+    ctr = 0
     for list_el in img_user_demo_list:
         nom_fichero = nombre_fichero(list_el)
         f_tgt = list_el.replace(nom_fichero, dup_folder_name + "\\" + nom_fichero)
         copia_file_crea_dirs(list_el, f_tgt)
+        ctr = ctr + 1
+        if ctr >=max_files and max_files>0:
+            return
 
 ##
 #
 ##
-def crear_foto_devel_dup_new_name(img_user_demo_list, dup_diff_folder_name, filename_postfix):
+def crear_foto_devel_dup_new_name(img_user_demo_list, dup_diff_folder_name, filename_postfix, max_files=0):
+    ctr = 0
     for list_el in img_user_demo_list:
         nom_fichero = nombre_fichero(list_el)
         f_tgt_pre, f_tgt_ext = os.path.splitext(nom_fichero)
         f_tgt = list_el.replace(nom_fichero, dup_diff_folder_name + "\\" + f_tgt_pre + filename_postfix + f_tgt_ext)
         copia_file_crea_dirs(list_el, f_tgt)
+        ctr = ctr + 1
+        if ctr >=max_files and max_files>0:
+            return
 
 ##
 #
@@ -69,16 +76,16 @@ def main():
         os.mkdir(FOTO_GEST_ROOT_DIR)
 
     # Creamos un set duplicado para la validacion: Usamos el catalogo real como fuente
-    img_user_demo_list = crear_foto_devel_set(FOTO_GEST_CATALGO_ORIGINAL, CATALOGO_ROOT_DIR, 10)
+    img_user_demo_list = crear_foto_devel_set(FOTO_GEST_CATALGO_ORIGINAL, CATALOGO_ROOT_DIR, 1000)
 
     # Use case: Create duplicate with same name. 
-    crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre")
+    #crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre", 100)
 
     # Use case: Create duplicate with same name. 
-    crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre_2")
+    #crear_foto_devel_dup(img_user_demo_list, "dup_mismo_nombre_2", 100)
 
     # Use case: Create duplicate with different name. 
-    crear_foto_devel_dup_new_name(img_user_demo_list, "dup_diff_nombre", "_new_name")
+    #crear_foto_devel_dup_new_name(img_user_demo_list, "dup_diff_nombre", "_new_name", 50)
 
 
 if __name__ == "__main__":

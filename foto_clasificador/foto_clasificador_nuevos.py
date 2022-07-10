@@ -31,14 +31,12 @@ def clasificacion_nuevos(dir_a_clasificar, dir_destino, dir_rechazados, dir_cuar
         for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
             # Get list {file, hash, size}
             dir_list_img = os.path.join(dir_a_clasificar, user)
-            img_hash_list = get_list_image_hash_sz(dir_list_img, lista_tipos)
+            img_hash_list = get_list_image_hash_sz(user, tag_tipo, dir_list_img, lista_tipos)
 
             # Update info in DB
             for fn_hash_sz in img_hash_list:
                 # Retorna un doc de lista_media
                 exists_img = get_media_hash_user_db(fn_hash_sz[1], user)
-                print('Existing img {0} is {1}'.format(fn_hash_sz[0], str(exists_img)))
-
                 if exists_img is None:
                     # Es un fichero nuevo que no existe en BD
                     media_dt, media_origen = get_fn_source(fn_hash_sz[0])

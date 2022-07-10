@@ -126,28 +126,16 @@ TAG_DT_ORIGIN_UNKNOWN = 'unknown'
 ##
 #   Funciones communes
 ##
+if sys.platform.startswith('win'):
+    VALID_KEY_REVISOR_MANUAL = {2555904:KEEP_RIGHT, 2424832:KEEP_LEFT, 2490368:KEEP_BOTH, 2621440:KEEP_NONE, 99:CLOSE_REVISION, 27:CLOSE_REVISION, -1:CLOSED_WINDOW}
+else:
+    VALID_KEY_REVISOR_MANUAL = {65363:KEEP_RIGHT, 65361:KEEP_LEFT, 65362:KEEP_BOTH, 65364:KEEP_NONE, 99:CLOSE_REVISION, 27:CLOSE_REVISION, -1:CLOSED_WINDOW}
 
 ##
 #
 ##
 def interpreta_op_code_plataforma(op_code):
-    if sys.platform.startswith('win'):
-        if op_code == 2555904:  return KEEP_RIGHT           # Right arrow
-        if op_code == 2424832:  return KEEP_LEFT            # Left arrow
-        if op_code == 2490368:  return KEEP_BOTH            # Up arrow
-        if op_code == 2621440:  return KEEP_NONE            # Down arrow
-        if op_code == 99:       return CLOSE_REVISION       # 'c'
-        if op_code == 27:       return CLOSE_REVISION       # ESC
-        if op_code == -1:       return CLOSED_WINDOW        # User closes window
-    else:
-        if op_code == 2555904:  return KEEP_RIGHT           # Right arrow
-        if op_code == 2424832:  return KEEP_LEFT            # Left arrow
-        if op_code == 2490368:  return KEEP_BOTH            # Up arrow
-        if op_code == 2621440:  return KEEP_NONE            # Down arrow
-        if op_code == 99:       return CLOSE_REVISION       # 'c'
-        if op_code == 27:       return CLOSE_REVISION       # ESC
-        if op_code == -1:       return CLOSED_WINDOW        # User closes window
-
+    return VALID_KEY_REVISOR_MANUAL[op_code]
 ##
 #
 ##
@@ -169,7 +157,7 @@ def is_file_whatsapp(fname):
 def copia_file_crea_dirs(src_fpath, dest_fpath):
     os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
     print("Copy: " + src_fpath + " -> " + dest_fpath)
-    shutil.copy(src_fpath, dest_fpath)
+    shutil.copy2(src_fpath, dest_fpath)
 
 def mueve_file_con_fecha_crea_dirs(src_fpath, dest_fpath):
     os.makedirs(os.path.dirname(dest_fpath), exist_ok=True)
@@ -227,7 +215,7 @@ def get_file_list(root_dir, lista_tipos, max_len=-1):
             ext_fn = extension_fichero(file).replace('.', '')
             if ext_fn in lista_tipos:
                 ret.append(os.path.normpath(os.path.join(root, file)))
-                if max_len>0 and len(ret)>max_len:                
+                if max_len>0 and len(ret)>=max_len:                
                     return ret
     return ret
 
@@ -288,5 +276,6 @@ def get_directory_size(directory):
         return os.path.getsize(directory)
     except PermissionError:
         # if for whatever reason we can't open the folder, return 0
+        print("EXCEPTION PermissionError Dir size: " + directory)
         return 0
     return total

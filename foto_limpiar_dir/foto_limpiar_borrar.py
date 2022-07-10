@@ -22,7 +22,7 @@ def borrar_fichero(borr):
         ret = del_borrar_db(borr)
         print("DB borrar removed: " + str(ret))    
     except:
-        print("MV ERROR: " + origen + " -> " + destino)
+        print("EXCEPTION MV borrar_fichero: " + origen + " -> " + destino)
 
 ##
 # Accedemos a la colecion lista_duplicados: movemos el fichero filename a papelera y eliminamos entrada en BD

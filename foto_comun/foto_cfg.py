@@ -12,3 +12,10 @@ CFG_DEVEL_MODE = True
 #
 ##
 CFG_DB_LOGS_SCREEN = False
+
+
+##
+#   Enable console print for EXIF operations (long prints)
+#
+##
+CFG_EXIF_LOGS_SCREEN = False

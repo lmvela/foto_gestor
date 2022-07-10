@@ -19,19 +19,18 @@ def print_estadisticas_db():
     print("Numero hash repetidos (cross-user): " + str(count_hash_repetidos_catalogo_db()))
     print("Numero hash repetidos (por user):" + str(count_hash_repetidos_catalogo_por_user_db()))
 
-    print("Numero total de documentos: " + str(count_all_docs_db()))
-    print("Numero total de documentos a CATALOGO: " + str(count_media_docs_db()))
-    print("Numero total de documentos a REVISAR: " + str(count_revisar_docs_db()))
-    print("Numero total de documentos a BORRAR: " + str(count_borrar_docs_db()))
-    print("Numero total de documentos DUPLICADOS: " + str(count_duplicados_docs_db()))
+    print("Total docs:\t\t" + str(count_all_docs_db()))
+    print("Total docs CATALOGO:\t" + str(count_media_docs_db()))
+    print("Total docs REVISAR:\t" + str(count_revisar_docs_db()))
+    print("Total docs BORRAR:\t" + str(count_borrar_docs_db()))
+    print("Total docs DUPLICADOS:\t" + str(count_duplicados_docs_db()))
     for user in USER_LIST:
-        print("Usuario:\t" + user)
         for _, tipo in LISTA_TIPOS_CATALOGO:
-            print("Tipo:\t\t" + tipo)
             # Numero / tamaño de ficheros / fotos / videos / audios por usuario
-            print(" TOTAL:\t\t{0}".format(count_typeuser_docs_db(user, tipo)))
+            print("")
+            print(user + " " + tipo + ":\t\t\t" + str(count_typeuser_docs_db(user, tipo)))
             # Numero / tamaño de ficheros en CATALOGO
-            print(" Catalogo\Dups\Revs\Borrar:\t{0}\{1}\{2}\{3}".format(\
+            print("-> Catalogo\Dups\Revs\Borrar:\t{0}\{1}\{2}\{3}".format(\
                 count_typeuser_media_docs_db(user, tipo),\
                 count_typeuser_duplicados_docs_db(user, tipo),\
                 count_typeuser_revisar_docs_db(user, tipo),\
@@ -101,7 +100,7 @@ def print_estadisticas_dir(desc, dir, n_files, s_files, n_aud_files, s_aud_files
         num, tamaño = proc_list_ficheros(get_file_list(dir, [ext]))
         print("Extension {0}:\t{1}\t{2}".format(ext, num, tamaño))
         n_files_ext = n_files_ext + num
-    print("Suma Ext\t:\t{0}".format(n_files_ext))
+    print("Suma Ext:\t\t{0}".format(n_files_ext))
 
     print("Totales:\t{0}\t{1}".format(n_files, s_files))
     print(" Audios:\t{0}\t{1}".format(n_aud_files, s_aud_files))    

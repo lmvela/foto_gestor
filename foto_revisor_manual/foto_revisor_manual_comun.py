@@ -52,7 +52,8 @@ def muestra_img_recibe_op(tipo_media, total_dup_fns, current_dup_fn, total_dups,
 
     WindowName=user + " " + tipo_media + " " + str(current_dup) + "/" + str(total_dups) +  " " +\
         str(current_dup_fn) + "/" + str(total_dup_fns) + " " +\
-        " => REF: " + fn_1.replace(FOTO_GEST_ROOT_DIR, "") + " vs " + fn_2.replace(FOTO_GEST_ROOT_DIR, "")
+        " => REF: " + fn_1.replace(os.path.join(CATALOGO_ROOT_DIR, user), "") + " vs " + \
+        fn_2.replace(os.path.join(CATALOGO_ROOT_DIR, user), "")
 
     # These line will force the window to be on top with focus.
     cv2.namedWindow(WindowName)
@@ -60,7 +61,15 @@ def muestra_img_recibe_op(tipo_media, total_dup_fns, current_dup_fn, total_dups,
     cv2.imshow(WindowName, imS)
 
     # Note waitKey return 0's for arrows in windows platform. Use waitKeyEx
-    op_code = cv2.waitKeyEx()   
+    if sys.platform.startswith('win'):
+        op_code = cv2.waitKeyEx()   
+    else:        
+        while True:
+            op_code = cv2.waitKeyEx(100) # change the value from the original 0 (wait forever) to something appropriate
+            if op_code in VALID_KEY_REVISOR_MANUAL and op_code != -1:
+                break
+            if cv2.getWindowProperty(WindowName, cv2.WND_PROP_VISIBLE) < 1:        
+                break   
     print("Key: " + str(op_code))
     op_code = interpreta_op_code_plataforma(op_code)
 

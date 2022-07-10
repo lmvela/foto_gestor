@@ -23,30 +23,32 @@ def clasificacion_completa_desde_zero(dir_a_clasificar):
         for lista_tipos, tag_tipo in LISTA_TIPOS_CATALOGO:
             # Get list {file, hash, size}
             dir_list_img = os.path.join(dir_a_clasificar, user)
-            img_hash_list = get_list_image_hash_sz(dir_list_img, lista_tipos)
+            img_hash_list = get_list_image_hash_sz(user, tag_tipo, dir_list_img, lista_tipos)
 
             # Update info in DB
             for fn_hash_sz in img_hash_list:
                 # Retorna un doc de lista_media
                 exists_img = get_media_hash_user_db(fn_hash_sz[1], user)
-                print('Existing img {0} is {1}'.format(fn_hash_sz[0], str(exists_img)))
 
                 if exists_img is None:
                     # Es un fichero nuevo que no existe en BD
                     media_dt, media_origen = get_fn_source(fn_hash_sz[0])
                     add_img_catalogo_db(fn_hash_sz, user, tag_tipo, media_origen, media_dt)
+                    print("CATALOGO AÑADIDO: " + fn_hash_sz[0])
                 elif exists_img['filename'] == fn_hash_sz[0]:
                     # Es un fichero que ya esta en la BD
                     img_existing_ok_db(exists_img)
+                    print("CATALOGO YA EXISTE: " + fn_hash_sz[0])
                 else: 
                     # Es un posible duplicado, procesalo          
                     proc_duplicado(fn_hash_sz, exists_img, user, tag_tipo)
+                    print("CATALOGO DUPLICADO: " + fn_hash_sz[0])
 
         # Analyzamos ficheros por tipo (tipos a descartar)
         for lista_tipos, tag_tipo in LISTA_TIPOS_DESCARTAR:
             # Get list {file, hash, size}
             dir_list_img = os.path.join(dir_a_clasificar, user)
-            img_hash_list = get_list_image_hash_sz(dir_list_img, lista_tipos)
+            img_hash_list = get_list_image_hash_sz(user, tag_tipo, dir_list_img, lista_tipos)
 
             # Update info in DB
             for fn_hash_sz in img_hash_list:

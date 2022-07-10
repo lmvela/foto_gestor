@@ -68,6 +68,7 @@ def os_creation_date(path_to_file):
         except AttributeError:
             # We're probably on Linux. No easy way to get creation dates here,
             # so we'll settle for when its content was last modified.
+            print("EXCEPTION Creation date analysis: " + path_to_file)
             return datetime.fromtimestamp(stat.st_mtime)
 
 ##
@@ -80,16 +81,16 @@ def read_fn_dt(fn):
         img_exif = img.getexif()
         if img_exif is not None:
             for key, val in img_exif.items():
-                if key in ExifTags.TAGS:
+                if key in ExifTags.TAGS and CFG_EXIF_LOGS_SCREEN:
                     print(f'{ExifTags.TAGS[key]}:{val}')            
                 if key == 0x0132 or key == 0x9003:   #DateTime or DateTimeOriginal
                     return (TAG_DT_ORIGIN_EXIF, datetime.strptime(val, '%Y:%m:%d %H:%M:%S'))
     except:
-        print("EXIF extraction failed with except: " + fn)
+        print("EXCEPTION EXIF extraction failed: " + fn)
         pass    # Carry on checking other metadata extraction methode
 
     # If no EXIF: take the file date / time
-    print("No EXIF: " + fn)
+    if CFG_EXIF_LOGS_SCREEN : print("No EXIF: " + fn)
     return (TAG_DT_ORIGIN_OS, os_creation_date(fn))
 
 ##
@@ -118,11 +119,16 @@ def get_fn_source(fn):
 ##
 #
 ##
-def get_list_image_hash_sz(root_dir, lista_tipos):
+def get_list_image_hash_sz(user, tag_tipo, root_dir, lista_tipos):
     ret_list = []
     file_list = get_file_list(root_dir, lista_tipos)
+    ctr_hash = 0
+    ctr_hash_total = len(file_list)
     for filename in file_list:
         hash = calculate_hash(filename)
         size = os.path.getsize(filename)
         ret_list.append((filename, hash, size))
+        if ctr_hash % 100 == 0:
+            print("{0}:{1} Get Hash: {2}/{3}".format(user, tag_tipo, ctr_hash, ctr_hash_total))
+        ctr_hash = ctr_hash + 1
     return ret_list
