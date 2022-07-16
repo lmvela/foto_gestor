@@ -12,6 +12,10 @@ else:
 from foto_comun.foto_cfg import *
 from foto_db.foto_db import *
 
+##
+# Backup token list
+##
+BACKUP_TOKEN_LIST = ['backup', 'Backup', 'copia']
 
 ##
 #   CFG Directorios raiz
@@ -42,7 +46,6 @@ CUARENTENA_NUEVOS_DIR = os.path.join(FOTO_GEST_ROOT_DIR, 'cuarentena')
 TAG_ORIGEN_CAMARA = "CAMARA"
 TAG_ORIGEN_WAPP = "WAPP"
 TAG_ORIGEN_DESCONOCIDO = "DESCONOCIDO"
-
 
 ##
 # Lista de Usuarios

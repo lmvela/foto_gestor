@@ -322,31 +322,60 @@ def del_media_hash_filename_db(hash, filename):
         print("DB ERROR: Borrando un media doc inexistente en BD:{0} {1} ".format(filename, hash))
     else:
         add_img_borrar_db(filename)
-        db.lista_media.delete_one(media_doc)
+        db.lista_media.delete_one({"_id":media_doc["_id"]})
         if CFG_DB_LOGS_SCREEN: print("DELETE: Borrado un media doc:{0} {1} ".format(filename, hash))
 
 ##
 #   Borrar un documento de la lista de duplicados
 ##
 def del_dup_db(dup):
-    return db.lista_duplicados.delete_one(dup)
+    return db.lista_duplicados.delete_one({"_id":dup["_id"]})
 
 ##
 #   Borrar un documento de la lista de revision
 ##
 def del_revisar_db(dup):
-    return db.lista_revision.delete_one(dup)
+    return db.lista_revision.delete_one({"_id":dup["_id"]})
 
 ##
 #   Borrar un documento de la lista de borrar
 ##
 def del_borrar_db(borr):
-    return db.lista_borrar.delete_one(borr)
+    return db.lista_borrar.delete_one({"_id":borr["_id"]})
     
+##
+#   Borrar un filename en un duplicado
+##
+def del_borrar_fn_dup_db(dup, fn):
+    result=db.lista_duplicados.update_one({ '_id':dup['_id'] }, \
+        { "$pull": { 'filenames': fn }} )
+    return result
 
 ###################################################################################################################
 # UPDATE methods
 ##
+
+##
+# Update el campo reference de un dup
+##
+def update_reference_dup_db(dup, new_reference):
+    result=db.lista_duplicados.update_one({ '_id':dup['_id'] }, \
+        { "$set": { 'reference': new_reference }} )
+    return result
+
+##
+# Update Reference filename in an existing media file
+##
+def update_reference_media_db(hash, user, new_reference):
+    existing_img = db.lista_media.find_one({'hash': hash, 'user': user})
+    if existing_img is None:
+        print("DB ERROR: no existe referencia para reemplazar con nuevo filename {0}".format(new_reference))
+    else:
+        # Reemplazar con el nuevo nombre
+        old_filename = existing_img['filename']
+        existing_img['filename']=new_reference       
+        result=db.lista_media.update_one({'_id':existing_img['_id']}, {"$set": {'filename':new_reference}}, upsert=False)
+        if CFG_DB_LOGS_SCREEN: print("Reemplazado filename {0} con filename {1}: {2}".format(old_filename, new_reference, str(result.upserted_id)))
 
 ##
 #   Dado un filename / hash de un doc en el media, actualiza el filename

@@ -80,7 +80,8 @@ def get_user_details():
 ##
 #
 ##
-def print_estadisticas_dir(desc, dir, n_files, s_files, n_aud_files, s_aud_files, n_img_files, s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files):
+def print_estadisticas_dir(desc, dir, n_files, s_files, n_aud_files, s_aud_files, n_img_files, \
+    s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files):
 
     print("")
     print(" Estadisticas DIRECTORIO: " + desc)
