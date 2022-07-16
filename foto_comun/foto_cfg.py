@@ -8,6 +8,12 @@
 CFG_DEVEL_MODE = True
 
 ##
+#   Conx al setup de produccion (cavehost DB)
+#   O al setup de desarrollo en portatil
+##
+CFG_SETUP_PRODUCCION = True
+
+##
 #   Enable console print from db operations (long prints)
 #
 ##

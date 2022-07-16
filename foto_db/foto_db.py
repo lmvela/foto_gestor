@@ -15,12 +15,10 @@ from foto_comun.foto_cfg import *
 ##
 # Conecta a DB y devuelve la coleccion
 ##
-# En sistema windows conectar a DB de test (local)
-if sys.platform.startswith('win'):
-    client = MongoClient(port=27017)
-# En sistema Linux conectar a la DB NAS
+if CFG_SETUP_PRODUCCION is True:
+    client=MongoClient("mongodb://mongodb:mongodb@192.168.1.204:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
 else:
-    client=MongoClient("mongodb://mongodb:mongodb@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false")
+    client = MongoClient(port=27017)
 
 ##
 # Usar DB de produccion o de desarrollo
@@ -165,34 +163,18 @@ def get_size_media_db():
     return record['sum']
 
 def get_size_rev_db():
-    pipeline = [
-        { "$match": {} }, 
-        { "$group": { "_id": None, "sum": {"$sum": "$size"}}}
-    ]
-
-    results = db.lista_revision.aggregate(pipeline)
-    try:
-        record = results.next()
-    except StopIteration:
-        print("EXCEPTION DB: get_size_media_db: empty cursor")
-
-    if CFG_DB_LOGS_SCREEN: pprint.pprint(record['sum'])
-    return record['sum']
+    list_rev=db.lista_revision.find()
+    rev_sz = 0
+    for rev in list_rev:
+        rev_sz = rev_sz + rev['size'] * len(rev['filenames'])
+    return rev_sz
 
 def get_size_dup_db():
-    pipeline = [
-        { "$match": {} }, 
-        { "$group": { "_id": None, "sum": {"$sum": "$size"}}}
-    ]
-
-    results = db.lista_duplicados.aggregate(pipeline)
-    try:
-        record = results.next()
-        if CFG_DB_LOGS_SCREEN: pprint.pprint(record['sum'])
-        return record['sum']
-    except StopIteration:
-        print("EXCEPTION DB: get_size_media_db: empty cursor")
-        return 0
+    list_dup=db.lista_duplicados.find()
+    rev_sz = 0
+    for dup in list_dup:
+        rev_sz = rev_sz + dup['size'] * len(dup['filenames'])
+    return rev_sz
 
 ###################################################################################################################
 # COUNT methods

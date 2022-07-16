@@ -7,7 +7,7 @@ else:
     sys.path.append("/home/luis/Documentos/02_projects/fotogest/foto_gestor")
 from foto_comun.foto_comun import *
 from foto_db.foto_db import *
-from foto_clasificador_dir.foto_clasificador_dir import *
+from foto_clasificador.foto_clasificador_catologo import *
 from foto_estadisticas.foto_estadisticas import *
 
 ##

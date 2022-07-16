@@ -15,15 +15,16 @@ from foto_db.foto_db import *
 ##
 # Backup token list
 ##
-BACKUP_TOKEN_LIST = ['backup', 'Backup', 'copia']
+BACKUP_TOKEN_LIST = ['backup', 'Backup', 'copia', '15_10 NewYork_Boston/luis_movil', \
+    '15_10 NewYork_Boston/emma_movil', 'sd_joan', 'Eventos/06_01 Varios motorola']
 
 ##
 #   CFG Directorios raiz
 ##
-if sys.platform.startswith('win'):
-    BASE_DIR = 'C:\\work\\02_Pers\\proyectos\\foto_gestor'
-else:
+if CFG_SETUP_PRODUCCION is True:
     BASE_DIR = '/media/cavehost_hdd'
+else:
+    BASE_DIR = 'C:\\work\\02_Pers\\proyectos\\foto_gestor'
 
 if CFG_DEVEL_MODE is True:
     FOTO_GEST_ROOT_DIR = os.path.join(BASE_DIR, '00_fotos_devel') 

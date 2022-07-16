@@ -20,10 +20,10 @@ def print_estadisticas_db():
     print("Numero hash repetidos (por user):" + str(count_hash_repetidos_catalogo_por_user_db()))
 
     print("Total docs:\t\t" + str(count_all_docs_db()))
-    print("Total docs CATALOGO:\t" + str(count_media_docs_db()))
-    print("Total docs REVISAR:\t" + str(count_revisar_docs_db()))
-    print("Total docs BORRAR:\t" + str(count_borrar_docs_db()))
-    print("Total docs DUPLICADOS:\t" + str(count_duplicados_docs_db()))
+    print("Total docs CATALOGO:\t{0}/{1}".format(str(count_media_docs_db(), get_size_media_db())))
+    print("Total docs REVISAR:\t{0}/{1}".format(str(count_revisar_docs_db(), get_size_rev_db())))
+    print("Total docs DUPLICADOS:\t{0}/{1}".format(str(count_duplicados_docs_db(), get_size_dup_db())))
+    print("Total docs BORRAR:\t{0}".format(str(count_borrar_docs_db())))
     for user in USER_LIST:
         for _, tipo in LISTA_TIPOS_CATALOGO:
             # Numero / tamaño de ficheros / fotos / videos / audios por usuario
