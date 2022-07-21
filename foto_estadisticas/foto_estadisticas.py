@@ -21,8 +21,10 @@ def print_estadisticas_db():
 
     print("Total docs:\t\t" + str(count_all_docs_db()))
     print("Total docs CATALOGO:\t{0}/{1}".format(str(count_media_docs_db(), get_size_media_db())))
-    print("Total docs REVISAR:\t{0}/{1}".format(str(count_revisar_docs_db(), get_size_rev_db())))
-    print("Total docs DUPLICADOS:\t{0}/{1}".format(str(count_duplicados_docs_db(), get_size_dup_db())))
+    count_rev, size_rev = get_count_size_rev_db()
+    print("Total docs REVISAR:\t{0}/{1}".format(count_rev, size_rev))
+    count_rev, size_rev = get_count_size_dup_db()
+    print("Total docs DUPLICADOS:\t{0}/{1}".format(count_rev, size_rev))
     print("Total docs BORRAR:\t{0}".format(str(count_borrar_docs_db())))
     for user in USER_LIST:
         for _, tipo in LISTA_TIPOS_CATALOGO:
@@ -41,6 +43,8 @@ def print_estadisticas_db():
 #
 ##
 def actualiza_estadisticas_catalogo():
+    count_rev, size_rev = get_count_size_rev_db()
+    count_dup, size_dup = get_count_size_dup_db()    
     stats_doc = {
         'datetime'          : datetime.now(),
         'users'             : get_users_catalogo_db(),
@@ -48,12 +52,12 @@ def actualiza_estadisticas_catalogo():
         'hash_dup_user'     : count_hash_repetidos_catalogo_por_user_db(),
         'total_docs'        : count_all_docs_db(),
         'total_media'       : count_media_docs_db(),
-        'total_revisar'     : count_revisar_docs_db(),
+        'total_revisar'     : count_rev,
         'total_borrar'      : count_borrar_docs_db(),
-        'total_dup'         : count_duplicados_docs_db(),
+        'total_dup'         : count_dup,
         'size_media'        : get_size_media_db(),
-        'size_revisar'      : get_size_rev_db(),
-        'size_dup'          : get_size_dup_db(),
+        'size_revisar'      : size_rev,
+        'size_dup'          : size_dup,
         'user_details'      : get_user_details()
     }    
     # Estadisticas sobre la base de datos
