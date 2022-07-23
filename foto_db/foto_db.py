@@ -162,19 +162,23 @@ def get_size_media_db():
     if CFG_DB_LOGS_SCREEN: pprint.pprint(record['sum'])
     return record['sum']
 
-def get_size_rev_db():
+def get_count_size_rev_db():
     list_rev=db.lista_revision.find()
     rev_sz = 0
+    count = 0
     for rev in list_rev:
         rev_sz = rev_sz + rev['size'] * len(rev['filenames'])
-    return rev_sz
+        count = count + len(rev['filenames'])
+    return count, rev_sz
 
-def get_size_dup_db():
+def get_count_size_dup_db():
     list_dup=db.lista_duplicados.find()
-    rev_sz = 0
+    dup_sz = 0
+    count = 0
     for dup in list_dup:
-        rev_sz = rev_sz + dup['size'] * len(dup['filenames'])
-    return rev_sz
+        dup_sz = dup_sz + dup['size'] * len(dup['filenames'])
+        count = count + len(dup['filenames'])
+    return count, dup_sz
 
 ###################################################################################################################
 # COUNT methods
