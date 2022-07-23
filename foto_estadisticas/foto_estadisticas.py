@@ -20,15 +20,16 @@ def print_estadisticas_db():
     print("Numero hash repetidos (por user):" + str(count_hash_repetidos_catalogo_por_user_db()))
 
     print("Total docs:\t\t" + str(count_all_docs_db()))
-    print("Total docs CATALOGO:\t{0}/{1}".format(str(count_media_docs_db(), get_size_media_db())))
-    print("Total docs REVISAR:\t{0}/{1}".format(str(count_revisar_docs_db(), get_size_rev_db())))
-    print("Total docs DUPLICADOS:\t{0}/{1}".format(str(count_duplicados_docs_db(), get_size_dup_db())))
+    print("Total docs CATALOGO:\t{0}\t{1}".format(str(count_media_docs_db()), show_sz_gb(get_size_media_db())))
+    print("Total docs REVISAR:\t{0}\t{1}".format(str(count_revisar_docs_db()), show_sz_gb(get_size_rev_db())))
+    print("Total docs DUPLICADOS:\t{0}\t{1}".format(str(count_duplicados_docs_db()), show_sz_gb(get_size_dup_db())))
     print("Total docs BORRAR:\t{0}".format(str(count_borrar_docs_db())))
     for user in USER_LIST:
+        print("")
+        print(user)
         for _, tipo in LISTA_TIPOS_CATALOGO:
             # Numero / tamaño de ficheros / fotos / videos / audios por usuario
-            print("")
-            print(user + " " + tipo + ":\t\t\t" + str(count_typeuser_docs_db(user, tipo)))
+            print(" " + tipo + ":\t\t\t" + str(count_typeuser_docs_db(user, tipo)))
             # Numero / tamaño de ficheros en CATALOGO
             print("-> Catalogo\Dups\Revs\Borrar:\t{0}\{1}\{2}\{3}".format(\
                 count_typeuser_media_docs_db(user, tipo),\
@@ -84,7 +85,7 @@ def print_estadisticas_dir(desc, dir, n_files, s_files, n_aud_files, s_aud_files
     s_img_files, n_vid_files, s_vid_files, n_min_files, s_min_files, n_desc_files, s_desc_files):
 
     print("")
-    print(" Estadisticas DIRECTORIO: " + desc)
+    print(" Estadisticas DIRECTORIO: " + desc + ": " + dir)
     print("-----------------------------------------------")
 
     # Get list of extensions in the catalog
@@ -99,16 +100,16 @@ def print_estadisticas_dir(desc, dir, n_files, s_files, n_aud_files, s_aud_files
     n_files_ext = 0
     for ext in exts:
         num, tamaño = proc_list_ficheros(get_file_list(dir, [ext]))
-        print("Extension {0}:\t{1}\t{2}".format(ext, num, tamaño))
+        print("Extension {0}:\t{1}\t{2}".format(ext, num, show_sz_gb(tamaño)))
         n_files_ext = n_files_ext + num
     print("Suma Ext:\t\t{0}".format(n_files_ext))
 
-    print("Totales:\t{0}\t{1}".format(n_files, s_files))
-    print(" Audios:\t{0}\t{1}".format(n_aud_files, s_aud_files))    
-    print(" Imagenes:\t{0}\t{1}".format(n_img_files, s_img_files))
-    print(" Videos:\t{0}\t{1}".format(n_vid_files, s_vid_files))
-    print(" Miniaturas:\t{0}\t{1}".format(n_min_files, s_min_files))
-    print(" Descartar:\t{0}\t{1}".format(n_desc_files, s_desc_files))
+    print("Totales:\t{0}\t{1}".format(n_files, show_sz_gb(s_files)))
+    print(" Audios:\t{0}\t{1}".format(n_aud_files, show_sz_gb(s_aud_files)))
+    print(" Imagenes:\t{0}\t{1}".format(n_img_files, show_sz_gb(s_img_files)))
+    print(" Videos:\t{0}\t{1}".format(n_vid_files, show_sz_gb(s_vid_files)))
+    print(" Miniaturas:\t{0}\t{1}".format(n_min_files, show_sz_gb(s_min_files)))
+    print(" Descartar:\t{0}\t{1}".format(n_desc_files, show_sz_gb(s_desc_files)))
     print("N files check: " + str(n_aud_files+n_img_files+n_vid_files+n_min_files+n_desc_files) + "/" + str(n_files))
 
 ##
@@ -155,6 +156,7 @@ def main():
 
     # Actualiza tabla estadisticas DB
     actualiza_estadisticas_catalogo()
+
     # Print por pantalla
     print_estadisticas_db()
     

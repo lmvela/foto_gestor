@@ -138,6 +138,15 @@ else:
 ##
 #
 ##
+def show_sz_gb(tamaño_bytes):
+    tamaño_gb = float(tamaño_bytes)
+    tamaño_gb = tamaño_gb / 1024.0 / 1024.0 / 1024.0    # Convert bytes -> kB -> MB -> GB
+    str_float = "{:.3f}".format(tamaño_gb)
+    return  str_float + " Gb"
+
+##
+#
+##
 def interpreta_op_code_plataforma(op_code):
     return VALID_KEY_REVISOR_MANUAL[op_code]
 ##
@@ -244,7 +253,10 @@ def get_file_lists(root_dir, listas_tipos, max_len=-1):
 def proc_list_ficheros(file_list):
     size = 0
     for el in file_list:
-        size += os.path.getsize(el)
+        size_el = os.path.getsize(el)
+        size += size_el
+        #print("File list size calc:{0} el_size:{1} total_size:{2} {3}"\
+        #    .format(el, str(size_el), str(size), show_sz_gb(size)))
     return len(file_list), size
 
 ##
